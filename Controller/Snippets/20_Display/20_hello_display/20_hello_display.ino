@@ -1,3 +1,11 @@
+/**
+* Snippet to test the oled display hardware.
+*
+* Required Libs:
+* Adafruit SH1106 Lib(https://github.com/wonho-maker/Adafruit_SH1106). Is located in the 00_Lib folder.
+* Adafruit GFX Lib(https://github.com/adafruit/Adafruit-GFX-Library). Can be installed via Arduino IDE.
+*/
+
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>

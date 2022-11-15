@@ -1,6 +1,9 @@
 /**
 * Test snippet to test the led strip hardware.
 * The program iterates over each LED and switches one led more (green) on
+* 
+* Requried libs:
+* Adafruit NeoPixel Lib(https://github.com/adafruit/Adafruit_NeoPixel). Can be installed via Arduino IDE
 */
 
 #include <Adafruit_NeoPixel.h>
