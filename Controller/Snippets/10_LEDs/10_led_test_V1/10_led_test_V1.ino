@@ -9,6 +9,7 @@
 *    -> can be installed via Arduino IDE
 *********************************************************************/
 
+// LIBRARIES
 #include <Adafruit_NeoPixel.h>
 
 // PINS
