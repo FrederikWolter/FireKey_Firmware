@@ -1,25 +1,24 @@
-/**
+/*********************************************************************
 * FIREKEY - PROJECT
 * 
 * Code snippet to test the LED strip hardware component.
 * The program iterates over each LED and switches one LED more (green) on.
 * 
 * Requried libs:
-* - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) can be installed via Arduino IDE
-*/
+* - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
+*    -> can be installed via Arduino IDE
+*********************************************************************/
 
 #include <Adafruit_NeoPixel.h>
 
-// pin connected to DIN of the LED strip
-const int LED_PIN = 21;  // A3
+// PINS
+#define LED_PIN     21   // A3 - pin connected to DIN of the LED strip
 
-// amount of LEDs in the LED strip
-const int NUM_LEDS = 6;
+// CONSTANTS
+#define NUM_LEDS     6   // amount of LEDs in the LED strip
+#define LED_BRIGHT  20   // LED brightness
 
-// LED brightness
-const int LED_BRIGHTNEESS = 20;
-
-// get LED strip object
+// LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 
@@ -33,10 +32,9 @@ void loop() {
   // turn all LEDs off
   ledStrip.clear();
 
-  // for each LED ...
   for (int i = 0; i < NUM_LEDS; i++) {
     // set LED color to green
-    ledStrip.setPixelColor(i, 0, LED_BRIGHTNEESS, 0);
+    ledStrip.setPixelColor(i, 0, LED_BRIGHT, 0);
 
     // send the updated pixel colors to the hardware
     ledStrip.show();
@@ -44,10 +42,9 @@ void loop() {
     delay(1000);
   }
 
-  // for each LED ...
   for (int i = 0; i < NUM_LEDS; i++) {
     // set LED color to red
-    ledStrip.setPixelColor(i, LED_BRIGHTNEESS, 0, 0);
+    ledStrip.setPixelColor(i, LED_BRIGHT, 0, 0);
 
     // send the updated pixel colors to the hardware
     ledStrip.show();
@@ -55,10 +52,9 @@ void loop() {
     delay(1000);
   }
 
-  // for each LED ...
   for (int i = 0; i < NUM_LEDS; i++) {
     // set LED color to blue
-    ledStrip.setPixelColor(i, 0, 0, LED_BRIGHTNEESS);
+    ledStrip.setPixelColor(i, 0, 0, LED_BRIGHT);
 
     // send the updated pixel colors to the hardware
     ledStrip.show();
