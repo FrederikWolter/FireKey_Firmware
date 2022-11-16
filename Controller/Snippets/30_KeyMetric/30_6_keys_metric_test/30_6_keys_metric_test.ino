@@ -1,6 +1,19 @@
+/*********************************************************************
+* FIREKEY - PROJECT
+* 
+* Code snippet to test the key metric hardware component.
+* 
+* Requried libs:
+* - None
+*********************************************************************/
+
+//Define the row pins
 byte rows[] = { 5, 6 };
+
+// Define the column pins
 byte columns[] = { 10, 16, 14 };
 
+// Amount of rows and columns
 const int rowCount = sizeof(rows) / sizeof(rows[0]);
 const int colCount = sizeof(columns) / sizeof(columns[0]);
 
@@ -8,10 +21,13 @@ void setup() {
   Serial.begin(9600);
 
   for (int x = 0; x < colCount; x++) {
+    //Set output pins
     pinMode(columns[x], OUTPUT);
+    digitalWrite(columns[x],HIGH);
   }
 
   for (int x = 0; x < rowCount; x++) {
+    //declaring all the inputs and activating the internal pullup resistor
     pinMode(rows[x], INPUT_PULLUP);
   }
 }
@@ -43,5 +59,7 @@ void readMatrix() {
         keyPressed(rowIndex, colIndex);
       }
     }
+
+    digitalWrite(curRow, HIGH);
   }
 }
