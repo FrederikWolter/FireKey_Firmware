@@ -21,14 +21,14 @@ void setup() {
   Serial.begin(9600);
 
   for (int x = 0; x < colCount; x++) {
-    //Set output pins
-    pinMode(columns[x], OUTPUT);
-    digitalWrite(columns[x],HIGH);
+    //declaring all the inputs and activating the internal pullup resistor
+    pinMode(columns[x], INPUT_PULLUP);
   }
 
   for (int x = 0; x < rowCount; x++) {
-    //declaring all the inputs and activating the internal pullup resistor
-    pinMode(rows[x], INPUT_PULLUP);
+    //Set output pins and pull them high
+    pinMode(rows[x], OUTPUT);
+    digitalWrite(rows[x],HIGH);
   }
 }
 
