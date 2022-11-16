@@ -15,9 +15,10 @@
 #include <Adafruit_SH1106.h>
 
 // PINS
-#define OLED_RESET -1
+#define OLED_RESET -1       // use no extra reset pin
 
 // CONSTANTS
+#define OLED_ADDR 0x3C
 
 // OLED object
 Adafruit_SH1106 display(OLED_RESET);
@@ -25,16 +26,18 @@ Adafruit_SH1106 display(OLED_RESET);
 
 void setup()   {
   Serial.begin(9600);
-  Serial.println("i am alive");
-  delay(1000);
+  Serial.println("Starting ...");
 
-  display.begin(SH1106_SWITCHCAPVCC, 0x3C);
-  Serial.println("diplay started");
+  display.begin(SH1106_SWITCHCAPVCC, OLED_ADDR);
   display.clearDisplay();
+  Serial.println("display started");
 }
 
 
 void loop() {
+  display.clearDisplay();
+  Serial.println("frame");
+
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(25, 0);
@@ -46,7 +49,7 @@ void loop() {
   display.setTextSize(1);
   display.setTextColor(BLACK, WHITE);
   display.setCursor(20, 25);
-  display.println("FireKey");
+  display.println(" FireKey ");
   
   display.display();
   delay(1000);
