@@ -7,55 +7,58 @@
 * - None
 *********************************************************************/
 
-//Define the row pins
-byte rows[] = { 5, 6 };
+// CONSTANTS
+#define ROW_COUNT 2  // number of rows
+#define COL_COUNT 3  // number of columns
 
-// Define the column pins
-byte columns[] = { 10, 16, 14 };
+// PINS
+byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
+byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
-// Amount of rows and columns
-const int rowCount = sizeof(rows) / sizeof(rows[0]);
-const int colCount = sizeof(columns) / sizeof(columns[0]);
 
 void setup() {
   Serial.begin(9600);
 
-  for (int x = 0; x < colCount; x++) {
-    //declaring all the inputs and activating the internal pullup resistor
-    pinMode(columns[x], INPUT_PULLUP);
+  // declare all cols as input and activate internal pullup resistor
+  for (int x = 0; x < COL_COUNT; x++) {
+    pinMode(cols[x], INPUT_PULLUP);
   }
 
-  for (int x = 0; x < rowCount; x++) {
-    //Set output pins and pull them high
+  // declare all rows as output and set them high
+  for (int x = 0; x < ROW_COUNT; x++) {
     pinMode(rows[x], OUTPUT);
-    digitalWrite(rows[x],HIGH);
+    digitalWrite(rows[x], HIGH);
   }
 }
+
 
 void loop() {
+  Serial.print("pressed:");
   readMatrix();
+  Serial.println("");
+  delay(100);
 }
 
+
 void keyPressed(int rowIdx, int colIdx) {
-  Serial.print("Row: ");
+  Serial.print("R");
   Serial.print(rowIdx);
-  Serial.print(" Col: ");  
+  Serial.print("C");
   Serial.print(colIdx);
-  Serial.println(" pressed!");
+  Serial.print(" ");
 }
 
 void readMatrix() {
-  // iterate the rows
-  for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-    // row: set to output to low
+  // scan matrix
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    // row: set output to low
     byte curRow = rows[rowIndex];
     digitalWrite(curRow, LOW);
 
     // col: interate through the columns
-    for (int colIndex = 0; colIndex < colCount; colIndex++) {
-      byte colRow = columns[colIndex];
-      int keyStatus = digitalRead(colRow);
-      if (keyStatus == LOW) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      byte colRow = cols[colIndex];
+      if (digitalRead(colRow) == LOW) {
         keyPressed(rowIndex, colIndex);
       }
     }
