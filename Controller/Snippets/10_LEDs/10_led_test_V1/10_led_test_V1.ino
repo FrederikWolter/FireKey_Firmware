@@ -2,7 +2,7 @@
 * FIREKEY - PROJECT
 * 
 * Code snippet to test the LED strip hardware component.
-* The program iterates over each LED and switches one LED more (green) on.
+* The program iterates over each LED and its color.
 * 
 * Requried libs:
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
