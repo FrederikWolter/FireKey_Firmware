@@ -1,3 +1,12 @@
+/*********************************************************************
+* FIREKEY - PROJECT
+* 
+* Code snippet to test the key metric layer idea
+* 
+* Requried libs:
+* - None
+*********************************************************************/
+
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
