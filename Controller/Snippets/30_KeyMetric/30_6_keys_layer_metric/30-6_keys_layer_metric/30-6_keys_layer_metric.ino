@@ -15,11 +15,15 @@
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
-// LAYER INDEXES
+// LAYER
 const byte layerRowIdx = 0;         // define the layer row index
 const byte layerBackColIdx = 2;     // define the back button column index
 const byte layerHomeColIdx = 1;     // define the home button column index
 const byte layerForwardColIdx = 0;  // define the forward button column index
+const byte maxLayer = 5;
+const byte homeLayer = 0;
+
+byte currentLayer = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -67,13 +71,23 @@ void keyPressed(byte rowIdx, byte colIdx) {
     switch (colIdx) {
       case layerBackColIdx:
         Serial.println("Layer back");
+        if (currentLayer == 0) {
+          currentLayer = maxLayer - 1;
+        } else {
+          currentLayer--;
+        }
+        Serial.println(currentLayer);
         break;
       case layerForwardColIdx:
         Serial.println("Layer forward");
+        currentLayer = (currentLayer + 1) % maxLayer;
+        Serial.println(currentLayer);
         break;
       case layerHomeColIdx:
       default:
         Serial.println("Home");
+        currentLayer = homeLayer;
+        Serial.println(currentLayer);
     }
   } else {
     // the button rows with functions
