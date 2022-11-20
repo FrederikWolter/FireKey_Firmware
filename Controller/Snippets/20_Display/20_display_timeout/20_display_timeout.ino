@@ -31,7 +31,7 @@ byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 byte sleepCounter = 0;  // counter which is increased inside the loop. if this value reaches SLEEP_DELAY, the display is going to sleep
 
-byte sleeping = 0;  // bool to chech if the display is sleeping
+byte sleeping = 0;  // bool to check if the display is sleeping
 
 void setup() {
   Serial.begin(9600);
