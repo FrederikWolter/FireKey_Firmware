@@ -8,10 +8,10 @@
 *********************************************************************/
 
 // CONSTANTS
-#define ROW_COUNT 2  // number of rows
-#define COL_COUNT 3  // number of columns
-#define SPAM_SPEED 15   // how often is a key pressed while holding it down
-#define HOLD_DELAY 100 // delay befor a button is marked as holded. max 255, otherwise chanche keyDownCounter to int
+#define ROW_COUNT 2       // number of rows
+#define COL_COUNT 3       // number of columns
+#define SPAM_SPEED 15     // how often is a key pressed while holding it down
+#define HOLD_DELAY 100    // delay befor a button is marked as holded. max 255, otherwise chanche keyDownCounter to int
 #define DEBOUNCE_TIME 10  // Limit how often the metric is scanned.
 
 // PINS
