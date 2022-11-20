@@ -72,9 +72,9 @@ void keyPressed(byte rowIdx, byte colIdx) {
   byte index = rowIdx * COL_COUNT;
 
   if (rowIdx % 2 == 0) {        // even row?
-    index =+ colIdx;
+    index += colIdx;
   } else {                      // odd row?
-    index =+ COL_COUNT - 1 - colIdx;
+    index += COL_COUNT - 1 - colIdx;
   }
 
   // set LED color to green
