@@ -15,23 +15,23 @@
 #include <Adafruit_SH1106.h>
 
 // PINS
-#define OLED_RESET -1  // use no extra reset pin
+#define OLED_RESET -1                   // use no extra reset pin
+byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
+byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 // CONSTANTS
-#define OLED_ADDR 0x3C
+#define OLED_ADDR   0x3C
 #define SLEEP_DELAY 100  // max 255 otherwise change sleepCounter to int
-#define ROW_COUNT 2      // number of rows
-#define COL_COUNT 3      // number of columns
+#define ROW_COUNT   2    // number of rows
+#define COL_COUNT   3    // number of columns
 
 // OLED object
 Adafruit_SH1106 display(OLED_RESET);
 
-byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
-byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
+// VARIABLES
+long lastPress;
+bool sleeping = 0;      // check if the display is sleeping
 
-byte sleepCounter = 0;  // counter which is increased inside the loop. if this value reaches SLEEP_DELAY, the display is going to sleep
-
-byte sleeping = 0;  // bool to check if the display is sleeping
 
 void setup() {
   Serial.begin(9600);
@@ -50,13 +50,14 @@ void setup() {
 
   display.begin(SH1106_SWITCHCAPVCC, OLED_ADDR);
   display.clearDisplay();
+
   Serial.println("display started");
 }
 
 void sleepDisplay() {
   if (sleeping == 0) {
     sleeping = 1;
-    Serial.println("Display is goint to sleep...");
+    Serial.println("Display is going to sleep...");
     display.SH1106_command(SH1106_DISPLAYOFF);
   }
 }
@@ -66,40 +67,7 @@ void wakeDisplay() {
     sleeping = 0;
     Serial.println("Waking up display...");
     display.SH1106_command(SH1106_DISPLAYON);
-  }
-}
 
-void readMatrix() {
-  // scan matrix
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    // row: set output to low
-    byte curRow = rows[rowIndex];
-    digitalWrite(curRow, LOW);
-
-    // col: interate through the columns
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      byte colRow = cols[colIndex];
-      if (digitalRead(colRow) == LOW) {
-        keyPressed(rowIndex, colIndex);
-      }
-    }
-
-    digitalWrite(curRow, HIGH);
-  }
-}
-
-void keyPressed(byte rowIdx, byte colIdx) {
-  sleepCounter = 0;
-  Serial.println("Reset timeout");
-}
-
-void loop() {
-  readMatrix();
-  if (sleepCounter == SLEEP_DELAY) {
-    sleepDisplay();
-  } else {
-    sleepCounter++;
-    wakeDisplay();
     display.clearDisplay();
 
     display.setTextSize(1);
@@ -109,5 +77,41 @@ void loop() {
 
     display.display();
   }
-  delay(10);  //debounce delay
+}
+
+void readMatrix() {
+  // scan matrix
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    // pull output row to low
+    byte curRow = rows[rowIndex];
+    digitalWrite(curRow, LOW);
+
+    // is any column pulled to low due to a button being pressed?
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      byte colRow = cols[colIndex];
+      if (digitalRead(colRow) == LOW) {
+        keyPressed(rowIndex, colIndex);
+      }
+    }
+
+    // pull output row high again
+    digitalWrite(curRow, HIGH);
+  }
+}
+
+void keyPressed(byte rowIdx, byte colIdx) {
+  lastPress = millis();
+  Serial.println("Reset timeout");
+
+  wakeDisplay();
+}
+
+void loop() {
+  if(millis() - lastPress > 10){
+    readMatrix();
+  }
+  
+  if (millis() - lastPress > SLEEP_DELAY) {
+    sleepDisplay();
+  }
 }
