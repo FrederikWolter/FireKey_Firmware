@@ -14,23 +14,23 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 
+// CONSTANTS
+#define OLED_ADDR 0x3C
+#define SLEEP_DELAY_SECONDS 5  // delay in seconds befor the display is going to sleep
+#define ROW_COUNT 2            // number of rows
+#define COL_COUNT 3            // number of columns
+
 // PINS
 #define OLED_RESET -1                   // use no extra reset pin
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
-
-// CONSTANTS
-#define OLED_ADDR   0x3C
-#define SLEEP_DELAY 100  // max 255 otherwise change sleepCounter to int
-#define ROW_COUNT   2    // number of rows
-#define COL_COUNT   3    // number of columns
 
 // OLED object
 Adafruit_SH1106 display(OLED_RESET);
 
 // VARIABLES
 long lastPress;
-bool sleeping = 0;      // check if the display is sleeping
+bool sleeping = 0;  // check if the display is sleeping
 
 
 void setup() {
@@ -67,16 +67,19 @@ void wakeDisplay() {
     sleeping = 0;
     Serial.println("Waking up display...");
     display.SH1106_command(SH1106_DISPLAYON);
-
-    display.clearDisplay();
-
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(25, 0);
-    display.println("Hello display!");
-
-    display.display();
+    wirteToDisplay();
   }
+}
+
+void wirteToDisplay() {
+  display.clearDisplay();
+
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(25, 0);
+  display.println("Hello display!");
+
+  display.display();
 }
 
 void readMatrix() {
@@ -107,11 +110,11 @@ void keyPressed(byte rowIdx, byte colIdx) {
 }
 
 void loop() {
-  if(millis() - lastPress > 10){
+  if (millis() - lastPress > 10) {
     readMatrix();
   }
-  
-  if (millis() - lastPress > SLEEP_DELAY) {
+
+  if (millis() - lastPress > SLEEP_DELAY_SECONDS * 1000) {
     sleepDisplay();
   }
 }
