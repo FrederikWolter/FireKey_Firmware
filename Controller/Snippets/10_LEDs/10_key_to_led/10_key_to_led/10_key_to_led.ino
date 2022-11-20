@@ -1,9 +1,9 @@
 /*********************************************************************
 * FIREKEY - PROJECT
 * 
-* Code snippet which enables the led of the pressed key
+* Code snippet which lights up the led of the pressed key.
 * 
-* Requried libs:
+* Required libs:
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
 *    -> can be installed via Arduino IDE
 *********************************************************************/
@@ -14,12 +14,12 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
-#define NUM_LEDS 6   // amount of LEDs in the LED strip
+#define NUM_LEDS 6   // number of LEDs in the strip
 
 // PINS
+#define LED_PIN 21                      // A3 - pin connected to DIN of the LED strip
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
-#define LED_PIN 21                      // A3 - pin connected to DIN of the LED strip
 
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -50,11 +50,11 @@ void loop() {
 void readMatrix() {
   // scan matrix
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    // row: set output to low
+    // pull output row to low
     byte curRow = rows[rowIndex];
     digitalWrite(curRow, LOW);
 
-    // col: interate through the columns
+    // is any column pulled to low due to a button being pressed?
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       byte colRow = cols[colIndex];
       if (digitalRead(colRow) == LOW) {
@@ -62,19 +62,19 @@ void readMatrix() {
       }
     }
 
+    // pull output row high again
     digitalWrite(curRow, HIGH);
   }
 }
 
 void keyPressed(byte rowIdx, byte colIdx) {
-  //calculate led index out of row and col index
-  byte index;
+  // calculate led index out of row and col index
+  byte index = rowIdx * COL_COUNT;
 
-  if ((rowIdx + 1) % 2 == 0) {
-    Serial.println("this");
-    index = 3 * rowIdx - (colIdx - 2);
-  } else {
-    index = 3 * rowIdx + colIdx;
+  if (rowIdx % 2 == 0) {        // even row?
+    index =+ colIdx;
+  } else {                      // odd row?
+    index =+ COL_COUNT - 1 - colIdx;
   }
 
   // set LED color to green
