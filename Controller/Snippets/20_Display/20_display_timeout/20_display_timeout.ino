@@ -14,16 +14,16 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 
-// PINS
-#define OLED_RESET -1                   // use no extra reset pin
-byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
-byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
-
 // CONSTANTS
 #define OLED_ADDR   0x3C
 #define SLEEP_DELAY 100  // max 255 otherwise change sleepCounter to int
 #define ROW_COUNT   2    // number of rows
 #define COL_COUNT   3    // number of columns
+
+// PINS
+#define OLED_RESET -1                   // use no extra reset pin
+byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
+byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 // OLED object
 Adafruit_SH1106 display(OLED_RESET);
