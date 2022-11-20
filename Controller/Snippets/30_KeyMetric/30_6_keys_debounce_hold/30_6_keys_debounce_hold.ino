@@ -10,17 +10,17 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
+#define SPAM_SPEED 15
+#define HOLD_DELAY 100 // max 255. otherwise chanche keyDownCounter to int
+#define DEBOUNCE_TIME 10
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
-byte keyDownCounter[ROW_COUNT][COL_COUNT];  // max 255 holdDelay. otherwise chanche to int
+byte keyDownCounter[ROW_COUNT][COL_COUNT];  // max 255. otherwise chanche to int
 byte keySpamMode[ROW_COUNT][COL_COUNT];
 
-byte spamSpeed = 15;
-byte holdDelay = 100; // max 255. otherwise chanche to int
-byte debounceTime = 10;
 unsigned long startTime;
 
 void setup() {
@@ -40,7 +40,7 @@ void setup() {
 
 
 void loop() {
-  if ((millis() - startTime) > debounceTime) {
+  if ((millis() - startTime) > DEBOUNCE_TIME) {
     readMatrix();
     startTime = millis();
   }
@@ -54,14 +54,14 @@ void keyPressed(int rowIdx, int colIdx) {
     Serial.print("C");
     Serial.print(colIdx);
     Serial.println(" ");
-  } else if (keySpamMode[rowIdx][colIdx] && keyDownCounter[rowIdx][colIdx] > spamSpeed) {
+  } else if (keySpamMode[rowIdx][colIdx] && keyDownCounter[rowIdx][colIdx] > SPAM_SPEED) {
     Serial.print("R");
     Serial.print(rowIdx);
     Serial.print("C");
     Serial.print(colIdx);
     Serial.println(" ");
     keyDownCounter[rowIdx][colIdx] = 0;
-  } else if (keyDownCounter[rowIdx][colIdx] > holdDelay) {
+  } else if (keyDownCounter[rowIdx][colIdx] > HOLD_DELAY) {
     Serial.println("long");
     keySpamMode[rowIdx][colIdx] = 1;
   }
