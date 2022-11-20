@@ -16,7 +16,7 @@
 
 // CONSTANTS
 #define OLED_ADDR 0x3C
-#define SLEEP_DELAY_SECONDS 5  // delay in seconds befor the display is going to sleep
+#define SLEEP_DELAY_SECONDS 5  // delay in seconds before the display is going to sleep
 #define ROW_COUNT 2            // number of rows
 #define COL_COUNT 3            // number of columns
 

@@ -14,7 +14,7 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
-#define NUM_LEDS 6   // number of LEDs in the strip
+#define NUM_LEDS  6  // number of LEDs in the strip
 
 // PINS
 #define LED_PIN 21                      // A3 - pin connected to DIN of the LED strip

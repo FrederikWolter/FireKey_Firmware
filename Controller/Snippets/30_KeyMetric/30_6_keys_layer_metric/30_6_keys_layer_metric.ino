@@ -3,7 +3,7 @@
 * 
 * Code snippet to test the key metric layer idea
 * 
-* Requried libs:
+* Required libs:
 * - None
 *********************************************************************/
 
@@ -48,11 +48,11 @@ void loop() {
 void readMatrix() {
   // scan matrix
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    // row: set output to low
+    // pull output row to low
     byte curRow = rows[rowIndex];
     digitalWrite(curRow, LOW);
 
-    // col: interate through the columns
+    // is any column pulled to low due to a button being pressed?
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       byte colRow = cols[colIndex];
       if (digitalRead(colRow) == LOW) {
@@ -60,6 +60,7 @@ void readMatrix() {
       }
     }
 
+    // pull output row high again
     digitalWrite(curRow, HIGH);
   }
 }
