@@ -15,11 +15,11 @@
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
-byte keyDownCounter[ROW_COUNT][COL_COUNT];
+byte keyDownCounter[ROW_COUNT][COL_COUNT];  // max 255 holdDelay. otherwise chanche to int
 byte keySpamMode[ROW_COUNT][COL_COUNT];
 
 byte spamSpeed = 15;
-byte holdDelay = 350;
+byte holdDelay = 100; // max 255. otherwise chanche to int
 byte debounceTime = 10;
 unsigned long startTime;
 
