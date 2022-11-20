@@ -49,7 +49,8 @@ void setup() {
   }
 
   display.begin(SH1106_SWITCHCAPVCC, OLED_ADDR);
-  display.clearDisplay();
+
+  wirteToDisplay();
 
   Serial.println("display started");
 }
