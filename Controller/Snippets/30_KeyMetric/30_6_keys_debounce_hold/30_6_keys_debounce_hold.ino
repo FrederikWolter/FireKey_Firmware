@@ -10,18 +10,18 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
-#define SPAM_SPEED 15
-#define HOLD_DELAY 100 // max 255. otherwise chanche keyDownCounter to int
-#define DEBOUNCE_TIME 10
+#define SPAM_SPEED 15   // how often is a key pressed while holding it down
+#define HOLD_DELAY 100 // delay befor a button is marked as holded. max 255, otherwise chanche keyDownCounter to int
+#define DEBOUNCE_TIME 10  // Limit how often the metric is scanned.
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 byte keyDownCounter[ROW_COUNT][COL_COUNT];  // max 255. otherwise chanche to int
-byte keySpamMode[ROW_COUNT][COL_COUNT];
+byte keySpamMode[ROW_COUNT][COL_COUNT];     // defines if a key is in spam mode or not
 
-unsigned long startTime;
+unsigned long startTime;  // debounce
 
 void setup() {
   Serial.begin(9600);
