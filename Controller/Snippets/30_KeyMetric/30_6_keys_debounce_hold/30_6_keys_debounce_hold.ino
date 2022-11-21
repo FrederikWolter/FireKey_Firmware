@@ -65,7 +65,8 @@ void keyPressed(int rowIdx, int colIdx) {
     Serial.println("long");
     keySpamMode[rowIdx][colIdx] = 1;
   }
-  keyDownCounter[rowIdx][colIdx]++;
+  if (keyDownCounter[rowIdx][colIdx] < 255)
+    keyDownCounter[rowIdx][colIdx]++; // byte can only store 8 bit
 }
 
 void resetKey(byte rowIndex, byte colIndex) {
