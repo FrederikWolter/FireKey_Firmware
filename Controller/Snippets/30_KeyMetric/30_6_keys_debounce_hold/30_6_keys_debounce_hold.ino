@@ -85,6 +85,8 @@ void readMatrix() {
       byte colRow = cols[colIndex];
       if (digitalRead(colRow) == LOW) {
         keyPressed(rowIndex, colIndex);
+      } else if (keyDownCounter[rowIndex][colIndex] != 0) {
+        resetKey(rowIndex, colIndex);
       }
     }
 
