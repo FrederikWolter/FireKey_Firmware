@@ -57,7 +57,7 @@ void setup() {
 void loop() {
 }
 
-void drawCentreString(const char *buf, xPosition xPosition, yPosition yPosition) {
+void drawStringAtPosition(const char *buf, xPosition xPosition, yPosition yPosition) {
   int16_t x1, y1;
   uint16_t w, h;
   display.getTextBounds(buf, xPosition, yPosition, &x1, &y1, &w, &h);  //calc width of new string
