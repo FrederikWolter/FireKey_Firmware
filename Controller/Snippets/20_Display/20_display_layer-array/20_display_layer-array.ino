@@ -1,7 +1,7 @@
 /*********************************************************************
 * FIREKEY - PROJECT
 * 
-* Code snippet to test the display for multi layer usage
+* Code snippet to test the display for multi layer usage using arrays
 * 
 * Required libs:
 * - Adafruit SH1106 Lib(https://github.com/wonho-maker/Adafruit_SH1106)
