@@ -78,29 +78,29 @@ void displayShowMetricFuncs() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
 
-  drawCentreString("Prev", LEFT, ROW0);
-  drawCentreString("Home", CENTER, ROW0);
-  drawCentreString("Next", RIGHT, ROW0);
+  drawStringAtPosition("Prev", LEFT, ROW0);
+  drawStringAtPosition("Home", CENTER, ROW0);
+  drawStringAtPosition("Next", RIGHT, ROW0);
 
   display.drawLine(LEFT, HLINE1, RIGHT, HLINE1, WHITE);
   display.drawLine(VLINE1, TOP, VLINE1, BOTTOM, WHITE);
   display.drawLine(VLINE2, TOP, VLINE2, BOTTOM, WHITE);
 
-  drawCentreString("Action", LEFT, ROW1);
-  drawCentreString("Action", CENTER, ROW1);
-  drawCentreString("Action", RIGHT, ROW1);
+  drawStringAtPosition("Action", LEFT, ROW1);
+  drawStringAtPosition("Action", CENTER, ROW1);
+  drawStringAtPosition("Action", RIGHT, ROW1);
 
-  drawCentreString("Action", LEFT, ROW2);
-  drawCentreString("Action", CENTER, ROW2);
-  drawCentreString("Action", RIGHT, ROW2);
+  drawStringAtPosition("Action", LEFT, ROW2);
+  drawStringAtPosition("Action", CENTER, ROW2);
+  drawStringAtPosition("Action", RIGHT, ROW2);
 
-  drawCentreString("Action", LEFT, ROW3);
-  drawCentreString("Action", CENTER, ROW3);
-  drawCentreString("Action", RIGHT, ROW3);
+  drawStringAtPosition("Action", LEFT, ROW3);
+  drawStringAtPosition("Action", CENTER, ROW3);
+  drawStringAtPosition("Action", RIGHT, ROW3);
 
-  drawCentreString("Action", LEFT, ROW4);
-  drawCentreString("Action", CENTER, ROW4);
-  drawCentreString("Action", RIGHT, ROW4);
+  drawStringAtPosition("Action", LEFT, ROW4);
+  drawStringAtPosition("Action", CENTER, ROW4);
+  drawStringAtPosition("Action", RIGHT, ROW4);
 
   display.display();
 }
