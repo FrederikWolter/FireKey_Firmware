@@ -5,7 +5,9 @@
 * 
 * Required libs:
 * - Keyboard(https://github.com/arduino-libraries/Keyboard)
-*   -> can be installed via adruino cli
+*   -> can be installed via arduino ide (defauled installed)
+* - USBHost
+*   -> can be installed via arduino ide
 *********************************************************************/
 
 // LIBRARIES
