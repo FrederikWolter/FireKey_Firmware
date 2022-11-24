@@ -143,7 +143,7 @@ class Adafruit_SH1106 : public Adafruit_GFX {
   Adafruit_SH1106(int8_t SID, int8_t SCLK, int8_t DC, int8_t RST, int8_t CS);
   Adafruit_SH1106(int8_t DC, int8_t RST, int8_t CS);
   Adafruit_SH1106(int8_t RST);
-
+  ~Adafruit_SH1106(void);
   void begin(uint8_t switchvcc = SH1106_SWITCHCAPVCC, uint8_t i2caddr = SH1106_I2C_ADDRESS, bool reset=true);
   void SH1106_command(uint8_t c);
   void SH1106_data(uint8_t c);
