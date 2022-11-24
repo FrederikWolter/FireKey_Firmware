@@ -10,18 +10,17 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
+//Layers
+#define LAYER_ROW_IDX 0          // define the layer row index
+#define LAYER_BACK_COL_IDX 2     // define the back button column index
+#define LAYER_HOME_COL_IDX 1     // define the home button column index
+#define LAYER_FORWARD_COL_IDX 0  // define the forward button column index
+#define MAX_LAYER 5
+#define HOME_LAYER 0
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
-
-// LAYER
-const byte layerRowIdx = 0;         // define the layer row index
-const byte layerBackColIdx = 2;     // define the back button column index
-const byte layerHomeColIdx = 1;     // define the home button column index
-const byte layerForwardColIdx = 0;  // define the forward button column index
-const byte maxLayer = 5;
-const byte homeLayer = 0;
 
 byte currentLayer = 0;
 
@@ -67,27 +66,27 @@ void readMatrix() {
 
 void keyPressed(byte rowIdx, byte colIdx) {
 
-  if (rowIdx == layerRowIdx) {
+  if (rowIdx == LAYER_ROW_IDX) {
     // it's the row where the layer buttons are located
     switch (colIdx) {
-      case layerBackColIdx:
+      case LAYER_BACK_COL_IDX:
         Serial.println("Layer back");
         if (currentLayer == 0) {
-          currentLayer = maxLayer - 1;
+          currentLayer = MAX_LAYER - 1;
         } else {
           currentLayer--;
         }
         Serial.println(currentLayer);
         break;
-      case layerForwardColIdx:
+      case LAYER_FORWARD_COL_IDX:
         Serial.println("Layer forward");
-        currentLayer = (currentLayer + 1) % maxLayer;
+        currentLayer = (currentLayer + 1) % MAX_LAYER;
         Serial.println(currentLayer);
         break;
-      case layerHomeColIdx:
+      case LAYER_HOME_COL_IDX:
       default:
         Serial.println("Home");
-        currentLayer = homeLayer;
+        currentLayer = HOME_LAYER;
         Serial.println(currentLayer);
     }
   } else {

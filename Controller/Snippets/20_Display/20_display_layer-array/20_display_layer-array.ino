@@ -19,14 +19,15 @@
 #define COL_COUNT 3     // number of columns
 #define OLED_RESET -1   // use no extra reset pin
 #define OLED_ADDR 0x3C  //i2c address
-#define HOME_LAYER 0
-#define MAX_LAYER 5
+
 #define MAX_KEY_LENGTH 5
 //LAYERS
 #define LAYER_ROW_IDX 0          // define the layer row index
 #define LAYER_BACK_COL_IDX 2     // define the back button column index
 #define LAYER_HOME_COL_IDX 1     // define the home button column index
 #define LAYER_FORWARD_COL_IDX 0  // define the forward button column index
+#define MAX_LAYER 5
+#define HOME_LAYER 0
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins

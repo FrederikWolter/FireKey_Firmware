@@ -17,9 +17,9 @@
 // CONSTANTS
 #define NUM_LEDS 6                 // amount of LEDs in the LED strip
 #define LED_BRIGHT_UPDATE_STEP 20  // LED brightness update setp
+#define LED_UPDATE_RATE 50         // time between a led gets updated
 
 float lastUpdate;         // stores the last millies
-byte ledUpdateRate = 50;  // time between a led gets updated
 int ledBrightness;        // the current brightness of the led
 
 bool fadeIn = false;
@@ -38,7 +38,7 @@ void loop() {
   // turn all LEDs off
   ledStrip.clear();
 
-  if (millis() - lastUpdate > ledUpdateRate) {
+  if (millis() - lastUpdate > LED_UPDATE_RATE) {
     if (fadeIn) {
       ledBrightness += LED_BRIGHT_UPDATE_STEP;
       if (ledBrightness >= 255) {
