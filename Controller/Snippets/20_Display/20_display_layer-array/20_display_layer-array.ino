@@ -19,36 +19,32 @@
 #define COL_COUNT 3     // number of columns
 #define OLED_RESET -1   // use no extra reset pin
 #define OLED_ADDR 0x3C  //i2c address
+#define HOME_LAYER 0
+#define MAX_LAYER 5
+#define MAX_KEY_LENGTH 5
+//LAYERS
+#define LAYER_ROW_IDX 0          // define the layer row index
+#define LAYER_BACK_COL_IDX 2     // define the back button column index
+#define LAYER_HOME_COL_IDX 1     // define the home button column index
+#define LAYER_FORWARD_COL_IDX 0  // define the forward button column index
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
-// LAYER
-const byte layerRowIdx = 0;         // define the layer row index
-const byte layerBackColIdx = 2;     // define the back button column index
-const byte layerHomeColIdx = 1;     // define the home button column index
-const byte layerForwardColIdx = 0;  // define the forward button column index
-const byte maxLayer = 5;
-const byte homeLayer = 0;
-
 byte currentLayer = 0;
 
-char layerNames[5][7] = {
+char layerNames[MAX_LAYER][10] = {
   "Layer1",
   "Layer2",
   "Layer3",
   "Layer4",
   "Layer5",
-  "Layer6",
-  "Layer7",
-  "Layer8",
-  "Layer9",
-  "Layer10",
 };
 
 // Uses as second index the key index which is the led index
-char layerButtonFunc[5][12][5] = {
+char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] = {
+  // Last defines max amount of chars for a name of a key
   { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
     "L0R2", "L0M2", "L0L2",
     "L0L3", "L0M3", "L0R3",
@@ -69,26 +65,6 @@ char layerButtonFunc[5][12][5] = {
     "L4R2", "L4M2", "L4L2",
     "L4L3", "L4M3", "L4R3",
     "L4R4", "L4M4", "L4L4" },
-  { "L5L1", "L5M1", "L5R1",
-    "L5R2", "L5M2", "L5L2",
-    "L5L3", "L5M3", "L5R3",
-    "L5R4", "L5M4", "L5L4" },
-  { "L6L1", "L6M1", "L6R1",
-    "L6R2", "L6M2", "L6L2",
-    "L6L3", "L6M3", "L6R3",
-    "L6R4", "L6M4", "L6L4" },
-  { "L7L1", "L7M1", "L7R1",
-    "L7R2", "L7M2", "L7L2",
-    "L7L3", "L7M3", "L7R3",
-    "L7R4", "L7M4", "L7L4" },
-  { "L8L1", "L8M1", "L8R1",
-    "L8R2", "L8M2", "L8L2",
-    "L8L3", "L8M3", "L8R3",
-    "L8R4", "L8M4", "L8L4" },
-  { "L9L1", "L9M1", "L9R1",
-    "L9R2", "L9M2", "L9L2",
-    "L9L3", "L9M3", "L9R3",
-    "L9R4", "L9M4", "L9L4" },
 };
 
 typedef enum xPos {
@@ -161,27 +137,27 @@ void readMatrix() {
 }
 
 void keyPressed(byte rowIdx, byte colIdx) {
-  if (rowIdx == layerRowIdx) {
+  if (rowIdx == LAYER_ROW_IDX) {
     // it's the row where the layer buttons are located
     switch (colIdx) {
-      case layerBackColIdx:
+      case LAYER_BACK_COL_IDX:
         Serial.println("Layer back");
         if (currentLayer == 0) {
-          currentLayer = maxLayer - 1;
+          currentLayer = MAX_LAYER - 1;
         } else {
           currentLayer--;
         }
         Serial.println(currentLayer);
         break;
-      case layerForwardColIdx:
+      case LAYER_FORWARD_COL_IDX:
         Serial.println("Layer forward");
-        currentLayer = (currentLayer + 1) % maxLayer;
+        currentLayer = (currentLayer + 1) % MAX_LAYER;
         Serial.println(currentLayer);
         break;
-      case layerHomeColIdx:
+      case LAYER_HOME_COL_IDX:
       default:
         Serial.println("Home");
-        currentLayer = homeLayer;
+        currentLayer = HOME_LAYER;
         Serial.println(currentLayer);
     }
     setDisplayText();
