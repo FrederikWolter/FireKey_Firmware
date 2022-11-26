@@ -14,7 +14,7 @@
 // CONSTANTS
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
-#define NUM_LEDS  6  // number of LEDs in the strip
+#define NUM_LEDS 6   // number of LEDs in the strip
 
 // PINS
 #define LED_PIN 21                      // A3 - pin connected to DIN of the LED strip
@@ -23,6 +23,8 @@ byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+byte ledStatus[ROW_COUNT * COL_COUNT];
 
 void setup() {
   Serial.begin(9600);
@@ -67,18 +69,30 @@ void readMatrix() {
   }
 }
 
-void keyPressed(byte rowIdx, byte colIdx) {
+byte getLedIndex(byte rowIdx, byte colIdx) {
   // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
 
-  if (rowIdx % 2 == 0) {        // even row?
+  if (rowIdx % 2 == 0) {  // even row?
     index += colIdx;
-  } else {                      // odd row?
+  } else {  // odd row?
     index += COL_COUNT - 1 - colIdx;
   }
+  return index;
+}
 
-  // set LED color to green
-  ledStrip.setPixelColor(index, 0, 20, 0);
+void keyPressed(byte rowIdx, byte colIdx) {
+  byte ledIdx = getLedIndex(rowIdx, colIdx);
+
+  if (!ledStatus[ledIdx]) {
+    // set LED color to green
+    ledStrip.setPixelColor(ledIdx, 0, 20, 0);
+    ledStatus[ledIdx] = true;
+  } else {
+    // turn the LED off
+    ledStrip.setPixelColor(ledIdx, 0, 0, 0);
+    ledStatus[ledIdx] = false;
+  }
 
   // send the updated pixel colors to the hardware
   ledStrip.show();
