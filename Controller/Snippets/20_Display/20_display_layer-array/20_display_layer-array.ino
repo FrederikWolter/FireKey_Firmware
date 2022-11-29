@@ -22,10 +22,9 @@
 
 #define MAX_KEY_LENGTH 5
 //LAYERS
-#define LAYER_ROW_IDX 0          // define the layer row index
-#define LAYER_BACK_COL_IDX 2     // define the back button column index
-#define LAYER_HOME_COL_IDX 1     // define the home button column index
-#define LAYER_FORWARD_COL_IDX 0  // define the forward button column index
+#define LAYER_BACK_COL_KEY_IDX 2     // define the back button key index
+#define LAYER_HOME_COL_KEY_IDX 1     // define the home button key index
+#define LAYER_FORWARD_COL_KEY_IDX 0  // define the forward button key index
 #define MAX_LAYER 5
 #define HOME_LAYER 0
 
@@ -117,6 +116,18 @@ void loop() {
   delay(100);  // TODO real deboune
 }
 
+byte getLedIndex(byte rowIdx, byte colIdx) {
+  // calculate led index out of row and col index
+  byte index = rowIdx * COL_COUNT;
+
+  if (rowIdx % 2 == 0) {  // even row?
+    index += colIdx;
+  } else {  // odd row?
+    index += COL_COUNT - 1 - colIdx;
+  }
+  return index;
+}
+
 void readMatrix() {
   // scan matrix
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
@@ -138,43 +149,33 @@ void readMatrix() {
 }
 
 void keyPressed(byte rowIdx, byte colIdx) {
-  if (rowIdx == LAYER_ROW_IDX) {
-    // it's the row where the layer buttons are located
-    switch (colIdx) {
-      case LAYER_BACK_COL_IDX:
-        Serial.println("Layer back");
-        if (currentLayer == 0) {
-          currentLayer = MAX_LAYER - 1;
-        } else {
-          currentLayer--;
-        }
-        Serial.println(currentLayer);
-        break;
-      case LAYER_FORWARD_COL_IDX:
-        Serial.println("Layer forward");
-        currentLayer = (currentLayer + 1) % MAX_LAYER;
-        Serial.println(currentLayer);
-        break;
-      case LAYER_HOME_COL_IDX:
-      default:
-        Serial.println("Home");
-        currentLayer = HOME_LAYER;
-        Serial.println(currentLayer);
-    }
-    setDisplayText();
-  }
-}
 
-byte getLedIndex(byte rowIdx, byte colIdx) {
-  // calculate led index out of row and col index
-  byte index = rowIdx * COL_COUNT;
+  byte keyIdx = getLedIndex(rowIdx, colIdx);
 
-  if (rowIdx % 2 == 0) {  // even row?
-    index += colIdx;
-  } else {  // odd row?
-    index += COL_COUNT - 1 - colIdx;
+  switch (keyIdx) {
+    case LAYER_BACK_COL_KEY_IDX:
+      Serial.println("Layer back");
+      if (currentLayer == 0) {
+        currentLayer = MAX_LAYER - 1;
+      } else {
+        currentLayer--;
+      }
+      Serial.println(currentLayer);
+      break;
+    case LAYER_HOME_COL_KEY_IDX:
+      Serial.println("Home");
+      currentLayer = HOME_LAYER;
+      Serial.println(currentLayer);
+      break;
+    case LAYER_FORWARD_COL_KEY_IDX:
+      Serial.println("Layer forward");
+      currentLayer = (currentLayer + 1) % MAX_LAYER;
+      Serial.println(currentLayer);
+      break;
+    default:
+      Serial.println("No Action");
   }
-  return index;
+  setDisplayText();
 }
 
 void drawStringAtPosition(const char *buf, xPosition xPosition, yPosition yPosition) {
