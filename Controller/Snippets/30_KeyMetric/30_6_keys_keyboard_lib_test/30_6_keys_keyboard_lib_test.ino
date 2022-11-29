@@ -1,7 +1,7 @@
 /*********************************************************************
 * FIREKEY - PROJECT
 * 
-* Code snippet to test debouncing and key holds.
+* Code snippet to test they keyboard lib.
 * 
 * Required libs:
 * - Keyboard(https://github.com/arduino-libraries/Keyboard)
