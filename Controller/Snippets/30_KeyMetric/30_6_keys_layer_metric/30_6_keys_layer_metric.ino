@@ -11,9 +11,9 @@
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
 //Layers
-#define LAYER_BACK_COL_KEY_IDX 2     // define the back button key index
-#define LAYER_HOME_COL_KEY_IDX 1     // define the home button key index
-#define LAYER_FORWARD_COL_KEY_IDX 0  // define the forward button key index
+#define LAYER_BACK_KEY 2     // define the back button key index
+#define LAYER_HOME_KEY 1     // define the home button key index
+#define LAYER_FORWARD_KEY 0  // define the forward button key index
 #define MAX_LAYER 5
 #define HOME_LAYER 0
 
@@ -80,7 +80,7 @@ void keyPressed(byte rowIdx, byte colIdx) {
   byte keyIdx = getLedIndex(rowIdx, colIdx);
 
   switch (keyIdx) {
-    case LAYER_BACK_COL_KEY_IDX:
+    case LAYER_BACK_KEY:
       Serial.println("Layer back");
       if (currentLayer == 0) {
         currentLayer = MAX_LAYER - 1;
@@ -89,12 +89,12 @@ void keyPressed(byte rowIdx, byte colIdx) {
       }
       Serial.println(currentLayer);
       break;
-    case LAYER_HOME_COL_KEY_IDX:
+    case LAYER_HOME_KEY:
       Serial.println("Home");
       currentLayer = HOME_LAYER;
       Serial.println(currentLayer);
       break;
-    case LAYER_FORWARD_COL_KEY_IDX:
+    case LAYER_FORWARD_KEY:
       Serial.println("Layer forward");
       currentLayer = (currentLayer + 1) % MAX_LAYER;
       Serial.println(currentLayer);

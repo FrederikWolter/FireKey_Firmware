@@ -19,25 +19,25 @@
 #define ROW_COUNT 2  // number of rows
 #define COL_COUNT 3  // number of columns
 //Layers
-#define LAYER_BACK_COL_KEY_IDX 2     // define the back button key index
-#define LAYER_HOME_COL_KEY_IDX 1     // define the home button key index
-#define LAYER_FORWARD_COL_KEY_IDX 0  // define the forward button key index
+#define LAYER_BACK_KEY 2     // define the back button led index
+#define LAYER_HOME_KEY 1     // define the home button led index
+#define LAYER_FORWARD_KEY 0  // define the forward button led index
 #define MAX_LAYER 5
 #define HOME_LAYER 0
 
-// Buttons
-#define KEY_1_IDX 3
-#define KEY_2_IDX 4
-#define KEY_3_IDX 5
-#define KEY_4_IDX 8
-#define KEY_5_IDX 7
-#define KEY_6_IDX 6
-#define KEY_7_IDX 9
-#define KEY_8_IDX 10
-#define KEY_9_IDX 11
-#define KEY_10_IDX 14
-#define KEY_11_IDX 13
-#define KEY_12_IDX 12
+// Button constants defining the led index
+#define KEY_1 3
+#define KEY_2 4
+#define KEY_3 5
+#define KEY_4 8
+#define KEY_5 7
+#define KEY_6 6
+#define KEY_7 9
+#define KEY_8 10
+#define KEY_9 11
+#define KEY_10 14
+#define KEY_11 13
+#define KEY_12 12
 
 // PINS
 byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
@@ -102,79 +102,91 @@ void keyPressed(byte rowIdx, byte colIdx) {
   byte keyIdx = getLedIndex(rowIdx, colIdx);
 
   switch (keyIdx) {
-    case LAYER_BACK_COL_KEY_IDX:
-      Serial.println("Layer back");
-      if (currentLayer == 0) {
-        currentLayer = MAX_LAYER - 1;
-      } else {
-        currentLayer--;
-      }
-      Serial.println(currentLayer);
+    case LAYER_BACK_KEY:
+      keyLayerBackPressed(LAYER_BACK_KEY);
       break;
-    case LAYER_HOME_COL_KEY_IDX:
-      Serial.println("Home");
-      currentLayer = HOME_LAYER;
-      Serial.println(currentLayer);
+    case LAYER_HOME_KEY:
+      keyLayerHomePressed(LAYER_HOME_KEY);
       break;
-    case LAYER_FORWARD_COL_KEY_IDX:
-      Serial.println("Layer forward");
-      currentLayer = (currentLayer + 1) % MAX_LAYER;
-      Serial.println(currentLayer);
+    case LAYER_FORWARD_KEY:
+      keyLayerForwardPressed(LAYER_FORWARD_KEY);
       break;
-    case KEY_1_IDX:
+    case KEY_1:
       Serial.println(1);
-      keyOnePressed();
+      keyOnePressed(KEY_1);
       break;
-    case KEY_2_IDX:
+    case KEY_2:
       Serial.println(2);
-      keyTwoPressed();
+      keyTwoPressed(KEY_2);
       break;
-    case KEY_3_IDX:
+    case KEY_3:
       Serial.println(3);
-      keyThreePressed();
+      keyThreePressed(KEY_3);
       break;
-    case KEY_4_IDX:
+    case KEY_4:
       Serial.println(4);
-      keyFourPressed();
+      keyFourPressed(KEY_4);
       break;
-    case KEY_5_IDX:
+    case KEY_5:
       Serial.println(5);
-      keyFivePressed();
+      keyFivePressed(KEY_5);
       break;
-    case KEY_6_IDX:
+    case KEY_6:
       Serial.println(6);
-      keySixPressed();
+      keySixPressed(KEY_6);
       break;
-    case KEY_7_IDX:
+    case KEY_7:
       Serial.println(7);
-      keySevenPressed();
+      keySevenPressed(KEY_7);
       break;
-    case KEY_8_IDX:
+    case KEY_8:
       Serial.println(8);
-      keyEightPressed();
+      keyEightPressed(KEY_8);
       break;
-    case KEY_9_IDX:
+    case KEY_9:
       Serial.println(9);
-      keyNinePressed();
+      keyNinePressed(KEY_9);
       break;
-    case KEY_10_IDX:
+    case KEY_10:
       Serial.println(10);
-      keyTenPressed();
+      keyTenPressed(KEY_10);
       break;
-    case KEY_11_IDX:
+    case KEY_11:
       Serial.println(11);
-      keyElevenPressed();
+      keyElevenPressed(KEY_11);
       break;
-    case KEY_12_IDX:
+    case KEY_12:
       Serial.println(12);
-      keyTwelvePressed();
+      keyTwelvePressed(KEY_12);
       break;
     default:
       Serial.println("No Action");
   }
 }
 
-void keyOnePressed() {
+void keyLayerForwardPressed(byte keyLedIndex) {
+  Serial.println("Layer forward");
+  currentLayer = (currentLayer + 1) % MAX_LAYER;
+  Serial.println(currentLayer);
+}
+
+void keyLayerHomePressed(byte keyLedIndex) {
+  Serial.println("Home");
+  currentLayer = HOME_LAYER;
+  Serial.println(currentLayer);
+}
+
+void keyLayerBackPressed(byte keyLedIndex) {
+  Serial.println("Layer back");
+  if (currentLayer == 0) {
+    currentLayer = MAX_LAYER - 1;
+  } else {
+    currentLayer--;
+  }
+  Serial.println(currentLayer);
+}
+
+void keyOnePressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -193,7 +205,7 @@ void keyOnePressed() {
   }
 }
 
-void keyTwoPressed() {
+void keyTwoPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -212,7 +224,7 @@ void keyTwoPressed() {
   }
 }
 
-void keyThreePressed() {
+void keyThreePressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -231,7 +243,7 @@ void keyThreePressed() {
   }
 }
 
-void keyFourPressed() {
+void keyFourPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -250,7 +262,7 @@ void keyFourPressed() {
   }
 }
 
-void keyFivePressed() {
+void keyFivePressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -269,7 +281,7 @@ void keyFivePressed() {
   }
 }
 
-void keySixPressed() {
+void keySixPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -288,7 +300,7 @@ void keySixPressed() {
   }
 }
 
-void keySevenPressed() {
+void keySevenPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -307,7 +319,7 @@ void keySevenPressed() {
   }
 }
 
-void keyEightPressed() {
+void keyEightPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -326,7 +338,7 @@ void keyEightPressed() {
   }
 }
 
-void keyNinePressed() {
+void keyNinePressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -345,7 +357,7 @@ void keyNinePressed() {
   }
 }
 
-void keyTenPressed() {
+void keyTenPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -364,7 +376,7 @@ void keyTenPressed() {
   }
 }
 
-void keyElevenPressed() {
+void keyElevenPressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
@@ -383,7 +395,7 @@ void keyElevenPressed() {
   }
 }
 
-void keyTwelvePressed() {
+void keyTwelvePressed(byte keyLedIndex) {
   switch (currentLayer) {
     case 0:
       break;
