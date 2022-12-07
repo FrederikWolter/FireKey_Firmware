@@ -68,12 +68,7 @@ void loop() {
 byte getLedIndex(byte rowIdx, byte colIdx) {
   // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
-
-  if (rowIdx % 2 == 0) {  // even row?
-    index += colIdx;
-  } else {  // odd row?
-    index += COL_COUNT - 1 - colIdx;
-  }
+  index += rowIdx % 2 == 0 ? colIdx : COL_COUNT - 1 - colIdx;
   return index;
 }
 
@@ -103,13 +98,13 @@ void keyPressed(byte rowIdx, byte colIdx) {
 
   switch (keyIdx) {
     case LAYER_BACK_KEY:
-      keyLayerBackPressed(LAYER_BACK_KEY);
+      handleLayerKeyPress(LAYER_BACK_KEY);
       break;
     case LAYER_HOME_KEY:
-      keyLayerHomePressed(LAYER_HOME_KEY);
+      handleLayerKeyPress(LAYER_HOME_KEY);
       break;
     case LAYER_FORWARD_KEY:
-      keyLayerForwardPressed(LAYER_FORWARD_KEY);
+      handleLayerKeyPress(LAYER_FORWARD_KEY);
       break;
     case KEY_1:
       Serial.println(1);
@@ -164,21 +159,18 @@ void keyPressed(byte rowIdx, byte colIdx) {
   }
 }
 
-void keyLayerForwardPressed(byte keyLedIndex) {
-  Serial.println("Layer forward");
-  currentLayer = (currentLayer + 1) % MAX_LAYER;
-  Serial.println(currentLayer);
-}
-
-void keyLayerHomePressed(byte keyLedIndex) {
-  Serial.println("Home");
-  currentLayer = HOME_LAYER;
-  Serial.println(currentLayer);
-}
-
-void keyLayerBackPressed(byte keyLedIndex) {
-  Serial.println("Layer back");
-  currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
+void handleLayerKeyPress(byte keyIdx) {
+  switch (keyIdx) {
+    case LAYER_BACK_KEY:
+      currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
+      break;
+    case LAYER_FORWARD_KEY:
+      currentLayer = (currentLayer + 1) % MAX_LAYER;
+      break;
+    case LAYER_HOME_KEY:
+    default:
+      currentLayer = HOME_LAYER;
+  }
   Serial.println(currentLayer);
 }
 
