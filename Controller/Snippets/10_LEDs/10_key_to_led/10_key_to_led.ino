@@ -72,12 +72,7 @@ void readMatrix() {
 byte getLedIndex(byte rowIdx, byte colIdx) {
   // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
-
-  if (rowIdx % 2 == 0) {  // even row?
-    index += colIdx;
-  } else {  // odd row?
-    index += COL_COUNT - 1 - colIdx;
-  }
+  index += rowIdx % 2 == 0 ? colIdx : COL_COUNT - 1 - colIdx;
   return index;
 }
 
