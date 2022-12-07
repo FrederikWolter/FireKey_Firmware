@@ -178,11 +178,7 @@ void keyLayerHomePressed(byte keyLedIndex) {
 
 void keyLayerBackPressed(byte keyLedIndex) {
   Serial.println("Layer back");
-  if (currentLayer == 0) {
-    currentLayer = MAX_LAYER - 1;
-  } else {
-    currentLayer--;
-  }
+  currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
   Serial.println(currentLayer);
 }
 

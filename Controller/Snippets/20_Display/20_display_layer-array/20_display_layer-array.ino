@@ -155,11 +155,7 @@ void keyPressed(byte rowIdx, byte colIdx) {
   switch (keyIdx) {
     case LAYER_BACK_COL_KEY_IDX:
       Serial.println("Layer back");
-      if (currentLayer == 0) {
-        currentLayer = MAX_LAYER - 1;
-      } else {
-        currentLayer--;
-      }
+      currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
       Serial.println(currentLayer);
       break;
     case LAYER_HOME_COL_KEY_IDX:
