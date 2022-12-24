@@ -12,12 +12,14 @@ public:
   Key();
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip);
   bool getState();
-  void setState(bool state);
+  bool update();
   void setLEDRGB(uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(String hexCode);
+  byte getIndex();
 };
 
 Key::Key() {
+  this->state = false;
 }
 
 Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip) {
@@ -26,14 +28,27 @@ Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip) {
   this->ledIndex = ledIndex;
   this->state = false;
   this->ledStrip = ledStrip;
+
+  //Setup matrix
+  pinMode(colPin, INPUT_PULLUP);
+  pinMode(rowPin, OUTPUT);
+  digitalWrite(rowPin, HIGH);
 }
 
 bool Key::getState() {
   return this->state;
 }
 
-void Key::setState(bool state) {
-  this->state = state;
+bool Key::update() {
+  //pull output row to low
+  digitalWrite(this->rowPin, LOW);
+
+  this->state = (digitalRead(this->colPin) == LOW);
+
+  // pull output row high again
+  digitalWrite(this->rowPin, HIGH);
+
+  return this->state;
 }
 
 void Key::setLEDRGB(uint16_t red, uint16_t green, uint16_t blue) {
@@ -44,4 +59,8 @@ void Key::setLEDRGB(String hexCode) {
   int red, green, blue;
   hexToRGB(hexCode, red, green, blue);
   this->ledStrip.setPixelColor(this->ledIndex, red, green, blue);
+}
+
+byte Key::getIndex(){
+  return this->ledIndex;
 }
