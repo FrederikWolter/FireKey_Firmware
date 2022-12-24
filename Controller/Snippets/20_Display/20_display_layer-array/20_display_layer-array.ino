@@ -13,6 +13,7 @@
 // LIBRARIES
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
+#include <MemoryFree.h>
 
 // CONSTANTS
 #define ROW_COUNT 2     // number of rows
@@ -112,6 +113,8 @@ void setup() {
 }
 
 void loop() {
+    Serial.println(freeMemory());
+  delay(1000);
   readMatrix();
   delay(100);  // TODO real deboune
 }
