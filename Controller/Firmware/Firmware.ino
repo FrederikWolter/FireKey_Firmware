@@ -28,7 +28,7 @@
 // Begin CONSTANTS
 
 // Keys
-#define ROW_COUNT 2       // number of rows
+#define ROW_COUNT 5       // number of rows
 #define COL_COUNT 3       // number of columns
 #define SPAM_SPEED 15     // how often is a key pressed while holding it down
 #define HOLD_DELAY 100    // delay before a button is marked as held. max 255, otherwise change keyDownCounter to int
@@ -49,8 +49,8 @@
 
 unsigned long startTime;  // debounce last check
 
-byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
-byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
+byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };  // define the row pins
+byte cols[COL_COUNT] = { 10, 16, 14 };     // define the column pins
 
 //TODO Move to key class?
 int keyDownCounter[COL_COUNT * ROW_COUNT];
