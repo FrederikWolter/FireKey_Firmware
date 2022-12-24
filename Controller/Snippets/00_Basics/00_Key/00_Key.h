@@ -9,12 +9,16 @@ private:
   Adafruit_NeoPixel ledStrip;
 
 public:
+  Key();
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip);
   bool getState();
   void setState(bool state);
   void setLEDRGB(uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(String hexCode);
 };
+
+Key::Key() {
+}
 
 Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip) {
   this->rowPin = row;
@@ -37,7 +41,7 @@ void Key::setLEDRGB(uint16_t red, uint16_t green, uint16_t blue) {
 }
 
 void Key::setLEDRGB(String hexCode) {
-	int red, green, blue;
-	hexToRGB(hexCode, red, green, blue);
-	this->ledStrip.setPixelColor(this->ledIndex, red, green, blue);
+  int red, green, blue;
+  hexToRGB(hexCode, red, green, blue);
+  this->ledStrip.setPixelColor(this->ledIndex, red, green, blue);
 }
