@@ -16,6 +16,8 @@
 *    -> can be installed via Arduino IDE
 *********************************************************************/
 
+//TODO USE U8G2LIB
+
 // LIBRARIES
 #include <MemoryFree.h>
 #include <Keyboard.h>
