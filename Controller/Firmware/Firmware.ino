@@ -371,6 +371,7 @@ void keyOnePressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyTwoPressed(Key key) {
@@ -390,6 +391,7 @@ void keyTwoPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyThreePressed(Key key) {
@@ -409,6 +411,7 @@ void keyThreePressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyFourPressed(Key key) {
@@ -428,6 +431,7 @@ void keyFourPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyFivePressed(Key key) {
@@ -447,6 +451,7 @@ void keyFivePressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keySixPressed(Key key) {
@@ -466,6 +471,7 @@ void keySixPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keySevenPressed(Key key) {
@@ -485,6 +491,7 @@ void keySevenPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyEightPressed(Key key) {
@@ -504,6 +511,7 @@ void keyEightPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyNinePressed(Key key) {
@@ -523,6 +531,7 @@ void keyNinePressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyTenPressed(Key key) {
@@ -542,6 +551,7 @@ void keyTenPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyElevenPressed(Key key) {
@@ -561,6 +571,7 @@ void keyElevenPressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
 
 void keyTwelvePressed(Key key) {
@@ -580,4 +591,5 @@ void keyTwelvePressed(Key key) {
     case 6:
       break;
   }
+  Keyboard.releaseAll();
 }
