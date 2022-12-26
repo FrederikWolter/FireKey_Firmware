@@ -29,7 +29,7 @@ Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel ledStrip) {
   this->state = false;
   this->ledStrip = ledStrip;
 
-  //Setup matrix
+  //Setup matrix (TODO Move out of key class?)
   pinMode(colPin, INPUT_PULLUP);
   pinMode(rowPin, OUTPUT);
   digitalWrite(rowPin, HIGH);

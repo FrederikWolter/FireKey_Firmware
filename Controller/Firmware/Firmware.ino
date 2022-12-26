@@ -1,7 +1,7 @@
 /*********************************************************************
 * FIREKEY - PROJECT
 * 
-* Firmware Version 0.1V
+* Firmware Version 0.5V
 * 
 * Required libs:
 * - Keyboard(https://github.com/arduino-libraries/Keyboard)
@@ -10,13 +10,12 @@
 *   -> can be installed via arduino ide
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
 *    -> can be installed via Arduino IDE
-* - Adafruit SH1106 Lib(https://github.com/wonho-maker/Adafruit_SH1106)
-*    -> is located in the 20_Display folder
-* - Adafruit GFX Lib(https://github.com/adafruit/Adafruit-GFX-Library)
+* - U8g2 Lib(https://github.com/olikraus/u8g2)
 *    -> can be installed via Arduino IDE
 *********************************************************************/
 
-//TODO USE U8G2LIB
+//TODO Comments && Serial.println(F("xxx"));
+//TODO LED Strip handling
 
 // LIBRARIES
 #include <MemoryFree.h>
@@ -24,8 +23,7 @@
 #include <Keyboard_de_DE.h>
 #include <KeyboardLayout.h>
 #include <Adafruit_NeoPixel.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH1106.h>
+#include <U8g2lib.h>
 #include "00_Key.h"
 #include <avr/pgmspace.h>
 
@@ -64,9 +62,10 @@
 #define LED_PIN 21
 
 // Display
-#define OLED_RESET -1     // use no extra reset pin
-#define OLED_ADDR 0x3C    //i2c address
-#define MAX_KEY_LENGTH 5  //max length for a key action name
+#define OLED_RESET -1           // use no extra reset pin
+#define OLED_ADDR 0x3C          //i2c address
+#define MAX_KEY_LENGTH 5        //max length for a key action name
+#define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display is going to sleep
 
 // Positions
 #define LEFT 0
@@ -74,19 +73,19 @@
 #define CENTER 64
 #define VLINE2 85
 #define RIGHT 127
-#define TOP 0
+#define TOP 14
 #define ROW0 2
-#define HLINE1 11
+#define HLINE1 14
 #define ROW1 16
 #define ROW2 28
 #define ROW3 40
 #define ROW4 52
 #define BOTTOM 63
-#define OFFSET 32
 
 // End CONSTANTS
 
-unsigned long startTime;  // debounce last check
+unsigned long debounceTime;    // debounce last check
+unsigned long lastKeyPressed;  // debounce last check
 
 const byte rows[ROW_COUNT] PROGMEM = { 5, 6, 7, 8, 9 };  // define the row pins
 const byte cols[COL_COUNT] PROGMEM = { 10, 16, 14 };     // define the column pins
@@ -96,32 +95,7 @@ byte currentLayer = 0;
 byte keyDownCounter[COL_COUNT * ROW_COUNT];
 bool keySpamMode[COL_COUNT * ROW_COUNT];  // defines if a key is in spam mode or not
 
-// Uses as second index the key index which is the led index
-const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] = {
-  // Last defines max amount of chars for a name of a key
-  { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
-    "L0R2", "L0M2", "L0L2",
-    "L0L3", "L0M3", "L0R3",
-    "L0R4", "L0M4", "L0L4" },
-  { "L1L1", "L1M1", "L1R1",
-    "L1R2", "L1M2", "L1L2",
-    "L1L3", "L1M3", "L1R3",
-    "L1R4", "L1M4", "L1L4" },
-  { "L2L1", "L2M1", "L2R1",
-    "L2R2", "L2M2", "L2L2",
-    "L2L3", "L2M3", "L2R3",
-    "L2R4", "L2M4", "L2L4" },
-  { "L3L1", "L3M1", "L3R1",
-    "L3R2", "L3M2", "L3L2",
-    "L3L3", "L3M3", "L3R3",
-    "L3R4", "L3M4", "L3L4" },
-  { "L4L1", "L4M1", "L4R1",
-    "L4R2", "L4M2", "L4L2",
-    "L4L3", "L4M3", "L4R3",
-    "L4R4", "L4M4", "L4L4" },
-};
-
-const char layerNames[MAX_LAYER][10] = {
+char layerNames[MAX_LAYER][10] = {
   "Layer1",
   "Layer2",
   "Layer3",
@@ -129,22 +103,52 @@ const char layerNames[MAX_LAYER][10] = {
   "Layer5",
 };
 
+// Uses as second index the key index which is the led index
+char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] = {
+  // Last defines max amount of chars for a name of a key
+  { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
+    "L0L2", "L0M2", "L0R2",
+    "L0L3", "L0M3", "L0R3",
+    "L0L4", "L0M4", "L0R4" },
+  { "L1L1", "L1M1", "L1R1",
+    "L1L2", "L1M2", "L1R2",
+    "L1L3", "L1M3", "L1R3",
+    "L1L4", "L1M4", "L1R4" },
+  { "L2L1", "L2M1", "L2R1",
+    "L2L2", "L2M2", "L2R2",
+    "L2L3", "L2M3", "L2R3",
+    "L2L4", "L2M4", "L2R4" },
+  { "L3L1", "L3M1", "L3R1",
+    "L3L2", "L3M2", "L3R2",
+    "L3L3", "L3M3", "L3R3",
+    "L3L4", "L3M4", "L3R4" },
+  { "L4L1", "L4M1", "L4R1",
+    "L4L2", "L4M2", "L4R2",
+    "L4L3", "L4M3", "L4R3",
+    "L4L4", "L4M4", "L4R4" },
+};
+
+bool sleeping = false;  // check if the display is sleeping
+
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED object
-Adafruit_SH1106 display(OLED_RESET);
+U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE);
 
 void setup() {
   Serial.begin(9600);
 
-  display.begin(SH1106_SWITCHCAPVCC, OLED_ADDR);
-  display.clearDisplay();
+  display.setFont(u8g2_font_6x10_tr);
+  //display.setI2CAddress(OLED_ADDR);
+  display.begin();
+  Serial.println(F("Display initialized"));
 
   // initialize LED strip object
   ledStrip.begin();
+  Serial.println(F("LED-Strip initialized"));
 
   // Setup key matrix
   for (byte r = 0; r < ROW_COUNT; r++) {
@@ -152,15 +156,90 @@ void setup() {
       keys[r][c] = Key(pgm_read_byte_near(rows + r), pgm_read_byte_near(cols + c), getLedIndex(r, c), ledStrip);
     }
   }
+  Serial.println(F("Matrix initialized"));
+
+  lastKeyPressed = millis();
 }
 
 void loop() {
-  Serial.println(freeMemory());
-  delay(1000);
-  if ((millis() - startTime) > DEBOUNCE_TIME) {
+
+  //Serial.println(freeMemory());
+
+  if ((millis() - debounceTime) > DEBOUNCE_TIME) {
     readMatrix();
-    startTime = millis();
+    debounceTime = millis();
   }
+
+  refreshDisplay();
+
+  if ((millis() - lastKeyPressed) > SLEEP_DELAY_SECONDS * 1000) {
+    sleepDisplay();
+  }
+}
+
+void refreshDisplay() {
+  if (!sleeping) {
+    display.firstPage();
+    do {
+      setDisplayText();
+    } while (display.nextPage());
+  }
+}
+
+void sleepDisplay() {
+  if (!sleeping) {
+    sleeping = true;
+    Serial.println(F("Display is going to sleep..."));
+    display.sleepOn();
+  }
+}
+
+void wakeDisplay() {
+  if (sleeping) {
+    sleeping = false;
+    Serial.println(F("Waking up display..."));
+    display.sleepOff();
+  }
+}
+
+void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
+  int h = display.getFontAscent() - display.getFontDescent();
+  int w = display.getStrWidth(buf);
+
+  if (xPosition == LEFT) {
+    display.setCursor(LEFT, yPosition + h);
+  } else if (xPosition == CENTER) {
+    int xVal = CENTER - w / 2;
+    display.setCursor(xVal, yPosition + h);
+  } else if (xPosition == RIGHT) {
+    int xVal = RIGHT - w;
+    display.setCursor(xVal, yPosition + h);
+  }
+  display.print(buf);
+}
+
+void setDisplayText() {
+  drawStringAtPosition(layerNames[currentLayer], CENTER, ROW0);
+
+  display.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+  display.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
+  display.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
+
+  drawStringAtPosition(layerButtonFunc[currentLayer][0], LEFT, ROW1);
+  drawStringAtPosition(layerButtonFunc[currentLayer][1], CENTER, ROW1);
+  drawStringAtPosition(layerButtonFunc[currentLayer][2], RIGHT, ROW1);
+
+  drawStringAtPosition(layerButtonFunc[currentLayer][3], LEFT, ROW2);
+  drawStringAtPosition(layerButtonFunc[currentLayer][4], CENTER, ROW2);
+  drawStringAtPosition(layerButtonFunc[currentLayer][5], RIGHT, ROW2);
+
+  drawStringAtPosition(layerButtonFunc[currentLayer][6], LEFT, ROW3);
+  drawStringAtPosition(layerButtonFunc[currentLayer][7], CENTER, ROW3);
+  drawStringAtPosition(layerButtonFunc[currentLayer][8], RIGHT, ROW3);
+
+  drawStringAtPosition(layerButtonFunc[currentLayer][9], LEFT, ROW4);
+  drawStringAtPosition(layerButtonFunc[currentLayer][10], CENTER, ROW4);
+  drawStringAtPosition(layerButtonFunc[currentLayer][11], RIGHT, ROW4);
 }
 
 byte getLedIndex(byte rowIdx, byte colIdx) {
@@ -195,6 +274,8 @@ void resetKey(byte keyIndex) {
 }
 
 void keyPressed(Key key) {
+  lastKeyPressed = millis();
+  wakeDisplay();
   //TODO Move to key class?
   if (keyDownCounter[key.getIndex()] == 0) {
     handleKeyPress(key);
