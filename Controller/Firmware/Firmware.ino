@@ -128,7 +128,7 @@ char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] = {
     "L4L4", "L4M4", "L4R4" },
 };
 
-bool sleeping = false;  // check if the display is sleeping
+bool sleeping;  // check if the display is sleeping
 
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -163,6 +163,7 @@ void setup() {
   Serial.println(F("Keyboard initialized"));
 
   lastKeyPressed = millis();
+  sleeping = false;
 }
 
 void loop() {
@@ -175,7 +176,7 @@ void loop() {
 
   refreshDisplay();
 
-  if ((millis() - lastKeyPressed) > SLEEP_DELAY_SECONDS * 1000) {
+  if ((millis() - lastKeyPressed) > ((long) SLEEP_DELAY_SECONDS * 1000)) {
     sleepDisplay();
   }
 }
