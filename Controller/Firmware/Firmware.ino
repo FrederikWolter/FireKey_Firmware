@@ -144,6 +144,7 @@ void setup() {
   display.setFont(u8g2_font_6x10_tr);
   //display.setI2CAddress(OLED_ADDR);
   display.begin();
+
   Serial.println(F("Display initialized"));
 
   // initialize LED strip object
@@ -158,11 +159,13 @@ void setup() {
   }
   Serial.println(F("Matrix initialized"));
 
+  Keyboard.begin(KeyboardLayout_de_DE);
+  Serial.println(F("Keyboard initialized"));
+
   lastKeyPressed = millis();
 }
 
 void loop() {
-
   //Serial.println(freeMemory());
 
   if ((millis() - debounceTime) > DEBOUNCE_TIME) {
