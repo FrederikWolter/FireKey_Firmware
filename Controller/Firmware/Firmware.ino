@@ -17,7 +17,6 @@
 *********************************************************************/
 
 //TODO Comments && Serial.println(F("xxx"));
-//TODO LED Timeout like the display
 
 // LIBRARIES
 #include <MemoryFree.h>
