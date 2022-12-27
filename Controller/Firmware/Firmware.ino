@@ -58,13 +58,14 @@
 #define KEY_12 12
 
 // Led
-#define NUM_LEDS 6  // number of LEDs in the strip
+#define NUM_LEDS 15  // number of LEDs in the strip
 #define LED_PIN 21
 
 // Display
 #define OLED_RESET -1           // use no extra reset pin
-#define OLED_ADDR 0x3C          //i2c address
+#define OLED_ADDR 0x3C          //i2c address display1
 #define MAX_KEY_LENGTH 5        //max length for a key action name
+#define LAYER_NAME_LENGTH 10    //max length for a layer name
 #define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display is going to sleep
 
 // Positions
@@ -95,7 +96,7 @@ byte currentLayer = 0;
 byte keyDownCounter[COL_COUNT * ROW_COUNT];
 bool keySpamMode[COL_COUNT * ROW_COUNT];  // defines if a key is in spam mode or not
 
-char layerNames[MAX_LAYER][10] = {
+const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
   "Layer1",
   "Layer2",
   "Layer3",
@@ -104,7 +105,7 @@ char layerNames[MAX_LAYER][10] = {
 };
 
 // Uses as second index the key index which is the led index
-char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] = {
+const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
   // Last defines max amount of chars for a name of a key
   { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
     "L0L2", "L0M2", "L0R2",
@@ -176,7 +177,7 @@ void loop() {
 
   refreshDisplay();
 
-  if ((millis() - lastKeyPressed) > ((long) SLEEP_DELAY_SECONDS * 1000)) {
+  if ((millis() - lastKeyPressed) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
     sleepDisplay();
   }
 }
@@ -223,27 +224,43 @@ void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
 }
 
 void setDisplayText() {
-  drawStringAtPosition(layerNames[currentLayer], CENTER, ROW0);
+  char layerBuf[LAYER_NAME_LENGTH + 1];
+  progMemStrCpy(layerNames[currentLayer], layerBuf);
+  drawStringAtPosition(layerBuf, CENTER, ROW0);
 
   display.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
   display.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
   display.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
 
-  drawStringAtPosition(layerButtonFunc[currentLayer][0], LEFT, ROW1);
-  drawStringAtPosition(layerButtonFunc[currentLayer][1], CENTER, ROW1);
-  drawStringAtPosition(layerButtonFunc[currentLayer][2], RIGHT, ROW1);
+  char actionBuf[MAX_KEY_LENGTH + 1];
 
-  drawStringAtPosition(layerButtonFunc[currentLayer][3], LEFT, ROW2);
-  drawStringAtPosition(layerButtonFunc[currentLayer][4], CENTER, ROW2);
-  drawStringAtPosition(layerButtonFunc[currentLayer][5], RIGHT, ROW2);
+  progMemStrCpy(layerButtonFunc[currentLayer][0], actionBuf);
+  drawStringAtPosition(actionBuf, LEFT, ROW1);
+  progMemStrCpy(layerButtonFunc[currentLayer][1], actionBuf);
+  drawStringAtPosition(actionBuf, CENTER, ROW1);
+  progMemStrCpy(layerButtonFunc[currentLayer][2], actionBuf);
+  drawStringAtPosition(actionBuf, RIGHT, ROW1);
 
-  drawStringAtPosition(layerButtonFunc[currentLayer][6], LEFT, ROW3);
-  drawStringAtPosition(layerButtonFunc[currentLayer][7], CENTER, ROW3);
-  drawStringAtPosition(layerButtonFunc[currentLayer][8], RIGHT, ROW3);
+  progMemStrCpy(layerButtonFunc[currentLayer][3], actionBuf);
+  drawStringAtPosition(actionBuf, LEFT, ROW2);
+  progMemStrCpy(layerButtonFunc[currentLayer][4], actionBuf);
+  drawStringAtPosition(actionBuf, CENTER, ROW2);
+  progMemStrCpy(layerButtonFunc[currentLayer][5], actionBuf);
+  drawStringAtPosition(actionBuf, RIGHT, ROW2);
 
-  drawStringAtPosition(layerButtonFunc[currentLayer][9], LEFT, ROW4);
-  drawStringAtPosition(layerButtonFunc[currentLayer][10], CENTER, ROW4);
-  drawStringAtPosition(layerButtonFunc[currentLayer][11], RIGHT, ROW4);
+  progMemStrCpy(layerButtonFunc[currentLayer][6], actionBuf);
+  drawStringAtPosition(actionBuf, LEFT, ROW3);
+  progMemStrCpy(layerButtonFunc[currentLayer][7], actionBuf);
+  drawStringAtPosition(actionBuf, CENTER, ROW3);
+  progMemStrCpy(layerButtonFunc[currentLayer][8], actionBuf);
+  drawStringAtPosition(actionBuf, RIGHT, ROW3);
+
+  progMemStrCpy(layerButtonFunc[currentLayer][9], actionBuf);
+  drawStringAtPosition(actionBuf, LEFT, ROW4);
+  progMemStrCpy(layerButtonFunc[currentLayer][10], actionBuf);
+  drawStringAtPosition(actionBuf, CENTER, ROW4);
+  progMemStrCpy(layerButtonFunc[currentLayer][11], actionBuf);
+  drawStringAtPosition(actionBuf, RIGHT, ROW4);
 }
 
 byte getLedIndex(byte rowIdx, byte colIdx) {

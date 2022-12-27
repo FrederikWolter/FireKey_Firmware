@@ -23,3 +23,13 @@ void hexToRGB(String hexCode, int& r, int& g, int& b) {
     b = strtol(hexCodeB.c_str(), NULL, 16);
   }
 }
+
+void progMemStrCpy(const char str[], char buf[]) {
+  char c;
+  byte i = 0;
+  while ((c = pgm_read_byte(str++))) {
+    buf[i] = c;
+    i++;
+  }
+  buf[i] = '\0';
+}
