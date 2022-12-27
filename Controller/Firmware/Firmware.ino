@@ -428,7 +428,6 @@ void keyPressed(Key key) {
 }
 
 void handleKeyPress(Key key) {
-  Serial.println(key.getIndex());
   switch (key.getIndex()) {
     case LAYER_BACK_KEY:
     case LAYER_HOME_KEY:
