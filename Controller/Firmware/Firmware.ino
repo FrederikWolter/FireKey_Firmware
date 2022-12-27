@@ -88,8 +88,8 @@
 unsigned long debounceTime;    // debounce last check
 unsigned long lastKeyPressed;  // debounce last check
 
-const byte rows[ROW_COUNT] PROGMEM = { 5, 6, 7, 8, 9 };  // define the row pins
-const byte cols[COL_COUNT] PROGMEM = { 10, 16, 14 };     // define the column pins
+const byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };  // define the row pins
+const byte cols[COL_COUNT] = { 10, 16, 14 };     // define the column pins
 byte currentLayer = 0;
 
 //TODO Move to key class?
@@ -155,7 +155,7 @@ void setup() {
   // Setup key matrix
   for (byte r = 0; r < ROW_COUNT; r++) {
     for (byte c = 0; c < COL_COUNT; c++) {
-      keys[r][c] = Key(pgm_read_byte_near(rows + r), pgm_read_byte_near(cols + c), getLedIndex(r, c), ledStrip);
+      keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), ledStrip);
     }
   }
   Serial.println(F("Matrix initialized"));
@@ -165,6 +165,7 @@ void setup() {
 
   lastKeyPressed = millis();
   sleeping = false;
+  refreshDisplay();
 }
 
 void loop() {
@@ -174,8 +175,6 @@ void loop() {
     readMatrix();
     debounceTime = millis();
   }
-
-  refreshDisplay();
 
   if ((millis() - lastKeyPressed) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
     sleepDisplay();
@@ -204,6 +203,7 @@ void wakeDisplay() {
     sleeping = false;
     Serial.println(F("Waking up display..."));
     display.sleepOff();
+    refreshDisplay();
   }
 }
 
@@ -311,6 +311,7 @@ void keyPressed(Key key) {
 }
 
 void handleKeyPress(Key key) {
+  Serial.println(key.getIndex());
   switch (key.getIndex()) {
     case LAYER_BACK_KEY:
     case LAYER_HOME_KEY:
@@ -370,6 +371,7 @@ void handleLayerKeyPress(Key key) {
     default:
       currentLayer = HOME_LAYER;
   }
+  refreshDisplay();
 }
 
 void keyOnePressed(Key key) {

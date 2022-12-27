@@ -8,11 +8,11 @@
 *********************************************************************/
 
 // CONSTANTS
-#define ROW_COUNT 2  // number of rows
+#define ROW_COUNT 5  // number of rows
 #define COL_COUNT 3  // number of columns
 
 // PINS
-byte rows[ROW_COUNT] = { 5, 6 };        // define the row pins
+byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };        // define the row pins
 byte cols[COL_COUNT] = { 10, 16, 14 };  // define the column pins
 
 
