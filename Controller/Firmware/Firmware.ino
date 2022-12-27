@@ -266,7 +266,23 @@ void loop() {
   }
 
   if ((millis() - lastKeyPressed) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
+    sleepComponents();
+  }
+}
+
+void sleepComponents() {
+  if (!sleeping) {
+    sleeping = true;
     sleepDisplay();
+    sleepLEDStrip();
+  }
+}
+
+void wakeComponents() {
+  if (sleeping) {
+    sleeping = false;
+    wakeDisplay();
+    wakeLEDStrip();
   }
 }
 
@@ -280,20 +296,14 @@ void refreshDisplay() {
 }
 
 void sleepDisplay() {
-  if (!sleeping) {
-    sleeping = true;
-    Serial.println(F("Display is going to sleep..."));
-    display.sleepOn();
-  }
+  Serial.println(F("Display is going to sleep..."));
+  display.sleepOn();
 }
 
 void wakeDisplay() {
-  if (sleeping) {
-    sleeping = false;
-    Serial.println(F("Waking up display..."));
-    display.sleepOff();
-    refreshDisplay();
-  }
+  Serial.println(F("Waking up display..."));
+  display.sleepOff();
+  refreshDisplay();
 }
 
 void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
@@ -359,6 +369,17 @@ void setLayerRGB() {
   ledStrip.show();
 }
 
+void sleepLEDStrip() {
+  Serial.println("Leds are going to sleep...");
+  ledStrip.clear();
+  ledStrip.show();
+}
+
+void wakeLEDStrip() {
+  Serial.println("Waking up leds...");
+  setLayerRGB();
+}
+
 byte getLedIndex(byte rowIdx, byte colIdx) {
   // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
@@ -392,7 +413,7 @@ void resetKey(byte keyIndex) {
 
 void keyPressed(Key key) {
   lastKeyPressed = millis();
-  wakeDisplay();
+  wakeComponents();
   //TODO Move to key class?
   if (keyDownCounter[key.getIndex()] == 0) {
     handleKeyPress(key);
@@ -474,18 +495,22 @@ void handleLayerKeyPress(Key key) {
 void keyOnePressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K1L0
       break;
     case 1:
+      //K1L1
       break;
     case 2:
+      //K1L2
       break;
     case 3:
+      //K1L3
       break;
     case 4:
+      //K1L4
       break;
     case 5:
-      break;
-    case 6:
+      //K1L5
       break;
   }
   Keyboard.releaseAll();
@@ -494,18 +519,22 @@ void keyOnePressed(Key key) {
 void keyTwoPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K2L0
       break;
     case 1:
+      //K2L1
       break;
     case 2:
+      //K2L2
       break;
     case 3:
+      //K2L3
       break;
     case 4:
+      //K2L4
       break;
     case 5:
-      break;
-    case 6:
+      //K2L5
       break;
   }
   Keyboard.releaseAll();
@@ -514,18 +543,22 @@ void keyTwoPressed(Key key) {
 void keyThreePressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K3L0
       break;
     case 1:
+      //K3L1
       break;
     case 2:
+      //K3L2
       break;
     case 3:
+      //K3L3
       break;
     case 4:
+      //K3L4
       break;
     case 5:
-      break;
-    case 6:
+      //K3L5
       break;
   }
   Keyboard.releaseAll();
@@ -534,18 +567,22 @@ void keyThreePressed(Key key) {
 void keyFourPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K4L0
       break;
     case 1:
+      //K4L1
       break;
     case 2:
+      //K4L2
       break;
     case 3:
+      //K4L3
       break;
     case 4:
+      //K4L4
       break;
     case 5:
-      break;
-    case 6:
+      //K4L5
       break;
   }
   Keyboard.releaseAll();
@@ -554,18 +591,22 @@ void keyFourPressed(Key key) {
 void keyFivePressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K5L0
       break;
     case 1:
+      //K5L1
       break;
     case 2:
+      //K5L2
       break;
     case 3:
+      //K5L3
       break;
     case 4:
+      //K5L4
       break;
     case 5:
-      break;
-    case 6:
+      //K5L5
       break;
   }
   Keyboard.releaseAll();
@@ -574,18 +615,22 @@ void keyFivePressed(Key key) {
 void keySixPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K6L0
       break;
     case 1:
+      //K6L1
       break;
     case 2:
+      //K6L2
       break;
     case 3:
+      //K6L3
       break;
     case 4:
+      //K6L4
       break;
     case 5:
-      break;
-    case 6:
+      //K6L5
       break;
   }
   Keyboard.releaseAll();
@@ -594,18 +639,22 @@ void keySixPressed(Key key) {
 void keySevenPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K7L0
       break;
     case 1:
+      //K7L1
       break;
     case 2:
+      //K7L2
       break;
     case 3:
+      //K7L3
       break;
     case 4:
+      //K7L4
       break;
     case 5:
-      break;
-    case 6:
+      //K7L5
       break;
   }
   Keyboard.releaseAll();
@@ -614,18 +663,22 @@ void keySevenPressed(Key key) {
 void keyEightPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K8L0
       break;
     case 1:
+      //K8L1
       break;
     case 2:
+      //K8L2
       break;
     case 3:
+      //K8L3
       break;
     case 4:
+      //K8L4
       break;
     case 5:
-      break;
-    case 6:
+      //K8L5
       break;
   }
   Keyboard.releaseAll();
@@ -634,18 +687,22 @@ void keyEightPressed(Key key) {
 void keyNinePressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K9L0
       break;
     case 1:
+      //K9L1
       break;
     case 2:
+      //K9L2
       break;
     case 3:
+      //K9L3
       break;
     case 4:
+      //K9L4
       break;
     case 5:
-      break;
-    case 6:
+      //K9L5
       break;
   }
   Keyboard.releaseAll();
@@ -654,18 +711,22 @@ void keyNinePressed(Key key) {
 void keyTenPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K10L0
       break;
     case 1:
+      //K10L1
       break;
     case 2:
+      //K10L2
       break;
     case 3:
+      //K10L3
       break;
     case 4:
+      //K10L4
       break;
     case 5:
-      break;
-    case 6:
+      //K10L5
       break;
   }
   Keyboard.releaseAll();
@@ -674,18 +735,22 @@ void keyTenPressed(Key key) {
 void keyElevenPressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K11L0
       break;
     case 1:
+      //K11L1
       break;
     case 2:
+      //K11L2
       break;
     case 3:
+      //K11L3
       break;
     case 4:
+      //K11L4
       break;
     case 5:
-      break;
-    case 6:
+      //K11L5
       break;
   }
   Keyboard.releaseAll();
@@ -694,18 +759,22 @@ void keyElevenPressed(Key key) {
 void keyTwelvePressed(Key key) {
   switch (currentLayer) {
     case 0:
+      //K12L0
       break;
     case 1:
+      //K12L1
       break;
     case 2:
+      //K12L2
       break;
     case 3:
+      //K12L3
       break;
     case 4:
+      //K12L4
       break;
     case 5:
-      break;
-    case 6:
+      //K12L5
       break;
   }
   Keyboard.releaseAll();
