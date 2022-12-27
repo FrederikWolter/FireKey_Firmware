@@ -51,16 +51,23 @@ bool Key::update() {
   return this->state;
 }
 
+void Key::setLEDRGB(byte ledIndex, uint16_t red, uint16_t green, uint16_t blue) {
+  (*this->ledStrip).setPixelColor(ledIndex, red, green, blue);
+  (*this->ledStrip).show();
+}
+
 void Key::setLEDRGB(uint16_t red, uint16_t green, uint16_t blue) {
   (*this->ledStrip).setPixelColor(this->ledIndex, red, green, blue);
+  (*this->ledStrip).show();
 }
 
 void Key::setLEDRGB(String hexCode) {
   int red, green, blue;
   hexToRGB(hexCode, red, green, blue);
   (*this->ledStrip).setPixelColor(this->ledIndex, red, green, blue);
+  (*this->ledStrip).show();
 }
 
-byte Key::getIndex(){
+byte Key::getIndex() {
   return this->ledIndex;
 }
