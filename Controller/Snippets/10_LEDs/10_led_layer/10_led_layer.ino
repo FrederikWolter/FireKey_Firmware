@@ -1,7 +1,7 @@
 /*********************************************************************
 * FIREKEY - PROJECT
 * 
-* Code snippet to test the key metric layer idea
+* Code snippet to handle the rgb layers
 * 
 * Required libs:
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
