@@ -129,6 +129,94 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
     "L4L4", "L4M4", "L4R4" },
 };
 
+const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
+  {
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+    { 0, 50, 0 },
+  },
+  {
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+    { 50, 0, 0 },
+  },
+  {
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+    { 0, 0, 50 },
+  },
+  {
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+    { 0, 50, 50 },
+  },
+  {
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+    { 50, 0, 50 },
+  }
+};
+
 bool sleeping;  // check if the display is sleeping
 
 // LED strip object
@@ -155,7 +243,7 @@ void setup() {
   // Setup key matrix
   for (byte r = 0; r < ROW_COUNT; r++) {
     for (byte c = 0; c < COL_COUNT; c++) {
-      keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), ledStrip);
+      keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip);
     }
   }
   Serial.println(F("Matrix initialized"));
@@ -166,6 +254,7 @@ void setup() {
   lastKeyPressed = millis();
   sleeping = false;
   refreshDisplay();
+  setLayerRGB();
 }
 
 void loop() {
@@ -261,6 +350,13 @@ void setDisplayText() {
   drawStringAtPosition(actionBuf, CENTER, ROW4);
   progMemStrCpy(layerButtonFunc[currentLayer][11], actionBuf);
   drawStringAtPosition(actionBuf, RIGHT, ROW4);
+}
+
+void setLayerRGB() {
+  for (byte k = 0; k < NUM_LEDS; k++) {
+    ledStrip.setPixelColor(k, pgm_read_byte_near(&layerRGB[currentLayer][k][0]), pgm_read_byte_near(&layerRGB[currentLayer][k][1]), pgm_read_byte_near(&layerRGB[currentLayer][k][2]));
+  }
+  ledStrip.show();
 }
 
 byte getLedIndex(byte rowIdx, byte colIdx) {
@@ -372,6 +468,7 @@ void handleLayerKeyPress(Key key) {
       currentLayer = HOME_LAYER;
   }
   refreshDisplay();
+  setLayerRGB();
 }
 
 void keyOnePressed(Key key) {
