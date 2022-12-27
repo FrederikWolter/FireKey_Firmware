@@ -12,6 +12,8 @@
 *    -> can be installed via Arduino IDE
 * - U8g2 Lib(https://github.com/olikraus/u8g2)
 *    -> can be installed via Arduino IDE
+* - avr/pgmspace lib
+*    -> is installed (arduino pro micro)
 *********************************************************************/
 
 //TODO Comments && Serial.println(F("xxx"));
