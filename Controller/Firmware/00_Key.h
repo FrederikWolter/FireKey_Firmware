@@ -13,6 +13,7 @@ public:
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip);
   bool getState();
   bool update();
+  void setLEDRGB(byte idx, uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(String hexCode);
   byte getIndex();
@@ -51,8 +52,8 @@ bool Key::update() {
   return this->state;
 }
 
-void Key::setLEDRGB(byte ledIndex, uint16_t red, uint16_t green, uint16_t blue) {
-  (*this->ledStrip).setPixelColor(ledIndex, red, green, blue);
+void Key::setLEDRGB(byte idx, uint16_t red, uint16_t green, uint16_t blue) {
+  (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }
 
