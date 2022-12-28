@@ -189,7 +189,11 @@ const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
 
 // END CONSTANTS
 
+//enable debugging
+#define DEBUG
+
 #include <avr/pgmspace.h>
+#include "Debug.h"
 #include "Basics.h"
 
 #include <MemoryFree.h>  //TODO remove

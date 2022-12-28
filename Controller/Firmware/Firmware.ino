@@ -16,14 +16,14 @@
 *    -> is installed (arduino pro micro)
 *********************************************************************/
 
-//TODO Serial.println(F("xxx"));
 //TODO move const to config file
 //TODO move led & keypress to key
 //TODO IFDEF DEBUG for serial print (debug.h)
+//TODO DEBUG_PRINTLN(F("xxx"));
 //TODO header split
 
 // LIBRARIES
-#include "config.h"
+#include "Config.h"
 
 unsigned long debounceTime;    // debounce last check
 unsigned long lastKeyPressed;  // last time a key got pressed (for the timeout functionality)
@@ -44,21 +44,21 @@ Key keys[ROW_COUNT][COL_COUNT];
 U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE);
 
 void setup() {
-  Serial.begin(9600);
+  DEBUG_BEGIN();
 
   // initialize the display
   display.setFont(u8g2_font_6x10_tr);
   //display.setI2CAddress(OLED_ADDR);
   display.begin();
 
-  Serial.println(F("Display initialized"));
+  DEBUG_PRINTLN(F("Display initialized"));
 
   // initialize LED strip
   ledStrip.begin();
   // set the led brightness
   ledStrip.setBrightness(LED_BRIGHT);
   ledStrip.show();
-  Serial.println(F("LED-Strip initialized"));
+  DEBUG_PRINTLN(F("LED-Strip initialized"));
 
   // Setup key matrix
   for (byte r = 0; r < ROW_COUNT; r++) {
@@ -66,11 +66,11 @@ void setup() {
       keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip);
     }
   }
-  Serial.println(F("Matrix initialized"));
+  DEBUG_PRINTLN(F("Matrix initialized"));
 
   // initialize keyboard
   Keyboard.begin(KeyboardLayout_de_DE);
-  Serial.println(F("Keyboard initialized"));
+  DEBUG_PRINTLN(F("Keyboard initialized"));
 
   // setup default values
   lastKeyPressed = millis();
@@ -80,7 +80,7 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println(freeMemory());
+  //DEBUG_PRINTLN(freeMemory());
 
   // debounced check of the key matrix
   if ((millis() - debounceTime) > DEBOUNCE_TIME) {
@@ -131,7 +131,7 @@ void refreshDisplay() {
 * Forces the @link display into the sleeping state
 */
 void sleepDisplay() {
-  Serial.println(F("Display is going to sleep..."));
+  DEBUG_PRINTLN(F("Display is going to sleep..."));
   display.sleepOn();
 }
 
@@ -139,7 +139,7 @@ void sleepDisplay() {
 * Wakes the @link display from the sleeping state
 */
 void wakeDisplay() {
-  Serial.println(F("Waking up display..."));
+  DEBUG_PRINTLN(F("Waking up display..."));
   display.sleepOff();
   refreshDisplay();
 }
@@ -226,7 +226,7 @@ void setLayerRGB() {
 * Forces the @link ledStrip into sleeping mode
 */
 void sleepLEDStrip() {
-  Serial.println("Leds are going to sleep...");
+  DEBUG_PRINTLN("Leds are going to sleep...");
   ledStrip.clear();
   ledStrip.show();
 }
@@ -235,7 +235,7 @@ void sleepLEDStrip() {
 * Wakes the @link ledStrip from the sleeping state
 */
 void wakeLEDStrip() {
-  Serial.println("Waking up leds...");
+  DEBUG_PRINTLN("Waking up leds...");
   setLayerRGB();
 }
 
@@ -266,7 +266,7 @@ void readMatrix() {
       Key key = keys[rowIndex][colIndex];
 
       // Check if the key is pressed
-      if (key.update()) { //TODO Rework
+      if (key.update()) {  //TODO Rework
         keyPressed(key);
       } else if (keyDownCounter[key.getIndex()] != 0) {
         resetKey(key.getIndex());
