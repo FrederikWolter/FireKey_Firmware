@@ -146,20 +146,30 @@ byte Key::getIndex() {
   return this->ledIndex;
 }
 
+/**
+* Sets the last RGB value for the LED and activates it
+*/
 void Key::setLastLEDColor() {
-  (*this->ledStrip).setPixelColor(this->ledIndex, lastLEDColor[0], lastLEDColor[1], lastLEDColor[2]);
-  (*this->ledStrip).show();
+  this->setLEDRGB(lastLEDColor[0], lastLEDColor[1], lastLEDColor[2]);
 }
 
+/**
+* Sets the last RGB value for the LED and activates it
+*/
 void Key::ledOn() {
   this->setLastLEDColor();
 }
 
+/**
+* Turns off the led
+*/
 void Key::ledOff() {
-  (*this->ledStrip).setPixelColor(this->ledIndex, 0, 0, 0);
-  (*this->ledStrip).show();
+  this->setLEDRGB(0, 0, 0);
 }
 
+/**
+* Loads the default rgb value and activates the led with it
+*/
 void Key::ledDefault() {
   lastLEDColor[0] = pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][0]);
   lastLEDColor[1] = pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][1]);
