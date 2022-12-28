@@ -215,6 +215,7 @@ const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
   },
 };
 
+
 // END CONSTANTS
 
 unsigned long debounceTime;    // debounce last check
@@ -225,7 +226,6 @@ byte currentLayer = 0;  //the current selected layer
 //TODO Move to key class?
 byte keyDownCounter[COL_COUNT * ROW_COUNT];  // contains the counter how long key got pressed. Is reset after reaching SPAM_SPEED and after reaching HOLD_DELAY the key ist marked as spam mode.
 bool keySpamMode[COL_COUNT * ROW_COUNT];     // defines if a key is in spam mode or not
-uint32_t lastLedValue[NUM_LEDS];             // holdes the saved led color values to restore the after wakeup
 
 bool sleeping;  // check if the display & the led strip is sleeping
 
@@ -418,40 +418,20 @@ void setLayerRGB() {
 }
 
 /**
-* Forces the @link ledStrip into sleeping mode & saves the last color values
+* Forces the @link ledStrip into sleeping mode
 */
 void sleepLEDStrip() {
   Serial.println("Leds are going to sleep...");
-  saveLEDValues();
   ledStrip.clear();
   ledStrip.show();
 }
 
 /**
-* Wakes the @link ledStrip from the sleeping state & restores the last color values
+* Wakes the @link ledStrip from the sleeping state
 */
 void wakeLEDStrip() {
   Serial.println("Waking up leds...");
-  restoreLEDValues();
-}
-
-/**
-* Restores the saved led color values & turns the leds back on
-*/
-void restoreLEDValues() {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    ledStrip.setPixelColor(i, lastLedValue[i]);
-  }
-  ledStrip.show();
-}
-
-/**
-* Saves the current led color values
-*/
-void saveLEDValues() {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    lastLedValue[i] = ledStrip.getPixelColor(i);
-  }
+  setLayerRGB();
 }
 
 /**
