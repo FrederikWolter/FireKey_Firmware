@@ -116,9 +116,6 @@ void Key::checkPressed() {
 * Sets the led color for a specific index
 */
 void Key::setLEDRGB(byte idx, byte red, byte green, byte blue) {
-  lastLEDColor[0] = red;
-  lastLEDColor[1] = green;
-  lastLEDColor[2] = blue;
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }
@@ -127,6 +124,9 @@ void Key::setLEDRGB(byte idx, byte red, byte green, byte blue) {
 * Sets the led color for the key
 */
 void Key::setLEDRGB(byte red, byte green, byte blue) {
+  lastLEDColor[0] = red;
+  lastLEDColor[1] = green;
+  lastLEDColor[2] = blue;
   this->setLEDRGB(this->ledIndex, red, green, blue);
 }
 
