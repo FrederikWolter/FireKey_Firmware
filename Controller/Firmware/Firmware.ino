@@ -59,8 +59,9 @@
 #define KEY_12 12
 
 // Led
-#define NUM_LEDS 15  // number of LEDs in the strip
-#define LED_PIN 21   // A3 - pin connected to DIN of the LED strip
+#define NUM_LEDS 15     // number of LEDs in the strip
+#define LED_PIN 21      // A3 - pin connected to DIN of the LED strip
+#define LED_BRIGHT 128  // LED strip brightness (brightness = (percentage / 100) * 255)
 
 // Display
 #define OLED_RESET -1           // use no extra reset pin
@@ -249,6 +250,9 @@ void setup() {
 
   // initialize LED strip
   ledStrip.begin();
+  // set the led brightness
+  ledStrip.setBrightness(LED_BRIGHT);
+  ledStrip.show();
   Serial.println(F("LED-Strip initialized"));
 
   // Setup key matrix
