@@ -4,9 +4,7 @@
 * Key handler
 * 
 * Required libs:
-* - 00_Basics
 *********************************************************************/
-#include "00_Basics.h"
 
 class Key {
 private:
@@ -26,6 +24,8 @@ public:
   void setLEDRGB(String hexCode);
   byte getIndex();
 };
+
+//TODO led on off default
 
 /**
 * Default constructor
