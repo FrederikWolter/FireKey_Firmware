@@ -62,6 +62,8 @@
 const byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };  // define the row pins
 const byte cols[COL_COUNT] = { 10, 16, 14 };     // define the column pins
 
+byte currentLayer = 0;  //the current selected layer
+
 // the names for each layer, which will be shown on the display
 const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
   "Layer1",
@@ -186,3 +188,339 @@ const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
 };
 
 // END CONSTANTS
+
+#include <avr/pgmspace.h>
+#include "Basics.h"
+
+#include <MemoryFree.h>  //TODO remove
+#include <Keyboard.h>
+#include <Keyboard_de_DE.h>
+#include <KeyboardLayout.h>
+#include <Adafruit_NeoPixel.h>
+#include <U8g2lib.h>
+
+#include "Key.h"
+
+/**
+* Handles the key 1 actions for each layer
+*/
+void keyOnePressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K1L0
+      break;
+    case 1:
+      //K1L1
+      break;
+    case 2:
+      //K1L2
+      break;
+    case 3:
+      //K1L3
+      break;
+    case 4:
+      //K1L4
+      break;
+    case 5:
+      //K1L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 2 actions for each layer
+*/
+void keyTwoPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K2L0
+      break;
+    case 1:
+      //K2L1
+      break;
+    case 2:
+      //K2L2
+      break;
+    case 3:
+      //K2L3
+      break;
+    case 4:
+      //K2L4
+      break;
+    case 5:
+      //K2L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 3 actions for each layer
+*/
+void keyThreePressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K3L0
+      break;
+    case 1:
+      //K3L1
+      break;
+    case 2:
+      //K3L2
+      break;
+    case 3:
+      //K3L3
+      break;
+    case 4:
+      //K3L4
+      break;
+    case 5:
+      //K3L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 4 actions for each layer
+*/
+void keyFourPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K4L0
+      break;
+    case 1:
+      //K4L1
+      break;
+    case 2:
+      //K4L2
+      break;
+    case 3:
+      //K4L3
+      break;
+    case 4:
+      //K4L4
+      break;
+    case 5:
+      //K4L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 5 actions for each layer
+*/
+void keyFivePressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K5L0
+      break;
+    case 1:
+      //K5L1
+      break;
+    case 2:
+      //K5L2
+      break;
+    case 3:
+      //K5L3
+      break;
+    case 4:
+      //K5L4
+      break;
+    case 5:
+      //K5L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 6 actions for each layer
+*/
+void keySixPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K6L0
+      break;
+    case 1:
+      //K6L1
+      break;
+    case 2:
+      //K6L2
+      break;
+    case 3:
+      //K6L3
+      break;
+    case 4:
+      //K6L4
+      break;
+    case 5:
+      //K6L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 7 actions for each layer
+*/
+void keySevenPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K7L0
+      break;
+    case 1:
+      //K7L1
+      break;
+    case 2:
+      //K7L2
+      break;
+    case 3:
+      //K7L3
+      break;
+    case 4:
+      //K7L4
+      break;
+    case 5:
+      //K7L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 8 actions for each layer
+*/
+void keyEightPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K8L0
+      break;
+    case 1:
+      //K8L1
+      break;
+    case 2:
+      //K8L2
+      break;
+    case 3:
+      //K8L3
+      break;
+    case 4:
+      //K8L4
+      break;
+    case 5:
+      //K8L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 9 actions for each layer
+*/
+void keyNinePressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K9L0
+      break;
+    case 1:
+      //K9L1
+      break;
+    case 2:
+      //K9L2
+      break;
+    case 3:
+      //K9L3
+      break;
+    case 4:
+      //K9L4
+      break;
+    case 5:
+      //K9L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 10 actions for each layer
+*/
+void keyTenPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K10L0
+      break;
+    case 1:
+      //K10L1
+      break;
+    case 2:
+      //K10L2
+      break;
+    case 3:
+      //K10L3
+      break;
+    case 4:
+      //K10L4
+      break;
+    case 5:
+      //K10L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 11 actions for each layer
+*/
+void keyElevenPressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K11L0
+      break;
+    case 1:
+      //K11L1
+      break;
+    case 2:
+      //K11L2
+      break;
+    case 3:
+      //K11L3
+      break;
+    case 4:
+      //K11L4
+      break;
+    case 5:
+      //K11L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
+
+/**
+* Handles the key 12 actions for each layer
+*/
+void keyTwelvePressed(Key key) {
+  switch (currentLayer) {
+    case 0:
+      //K12L0
+      break;
+    case 1:
+      //K12L1
+      break;
+    case 2:
+      //K12L2
+      break;
+    case 3:
+      //K12L3
+      break;
+    case 4:
+      //K12L4
+      break;
+    case 5:
+      //K12L5
+      break;
+  }
+  Keyboard.releaseAll();
+}
