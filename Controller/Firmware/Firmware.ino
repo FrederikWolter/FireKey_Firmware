@@ -281,7 +281,6 @@ void readMatrix() {
 void handleKeyPress(Key *key) {  //pass this fnct to key
   lastKeyPressed = millis();
   wakeComponents();
-  //Serial.println(key.getIndex());
   switch (key->getIndex()) {
     case LAYER_BACK_KEY:
     case LAYER_HOME_KEY:

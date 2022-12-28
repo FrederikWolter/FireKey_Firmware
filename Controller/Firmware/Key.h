@@ -102,7 +102,6 @@ void Key::checkPressed() {
     }
     if (this->keyDownCounter < 255) {
       this->keyDownCounter++;
-      Serial.println(this->keyDownCounter);
     }
 
   } else if (this->keyDownCounter != 0) {
