@@ -164,7 +164,8 @@ void Key::ledOn() {
 * Turns off the led
 */
 void Key::ledOff() {
-  this->setLEDRGB(0, 0, 0);
+  (*this->ledStrip).setPixelColor(this->getIndex(), 0, 0, 0);
+  (*this->ledStrip).show();
 }
 
 /**
