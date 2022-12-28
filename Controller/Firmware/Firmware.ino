@@ -16,19 +16,19 @@
 *    -> is installed (arduino pro micro)
 *********************************************************************/
 
-//TODO Comments && Serial.println(F("xxx"));
+//TODO Serial.println(F("xxx"));
 
 // LIBRARIES
-#include <MemoryFree.h>
+#include <MemoryFree.h>  //TODO remove
+#include <avr/pgmspace.h>
 #include <Keyboard.h>
 #include <Keyboard_de_DE.h>
 #include <KeyboardLayout.h>
 #include <Adafruit_NeoPixel.h>
 #include <U8g2lib.h>
 #include "00_Key.h"
-#include <avr/pgmspace.h>
 
-// Begin CONSTANTS
+// Begin DEFINE CONSTANTS
 
 // Keys
 #define ROW_COUNT 5       // number of rows
@@ -41,8 +41,8 @@
 #define LAYER_BACK_KEY 2     // define the back button led index
 #define LAYER_HOME_KEY 1     // define the home button led index
 #define LAYER_FORWARD_KEY 0  // define the forward button led index
-#define MAX_LAYER 5
-#define HOME_LAYER 0
+#define MAX_LAYER 5          // amount of available layers
+#define HOME_LAYER 0         // the default layer after the home button is pressed
 
 // Button constants defining the led index
 #define KEY_1 3
@@ -60,16 +60,16 @@
 
 // Led
 #define NUM_LEDS 15  // number of LEDs in the strip
-#define LED_PIN 21
+#define LED_PIN 21   // A3 - pin connected to DIN of the LED strip
 
 // Display
 #define OLED_RESET -1           // use no extra reset pin
-#define OLED_ADDR 0x3C          //i2c address display1
-#define MAX_KEY_LENGTH 5        //max length for a key action name
-#define LAYER_NAME_LENGTH 10    //max length for a layer name
-#define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display is going to sleep
+#define OLED_ADDR 0x3C          // i2c address of the first display
+#define MAX_KEY_LENGTH 5        // max length for a key action name
+#define LAYER_NAME_LENGTH 10    // max length for a layer name
+#define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display & the led strip is going to sleep
 
-// Positions
+// Positions for the texts on the display
 #define LEFT 0
 #define VLINE1 41
 #define CENTER 64
@@ -84,19 +84,14 @@
 #define ROW4 52
 #define BOTTOM 63
 
-// End CONSTANTS
+// End DEFINE CONSTANTS
 
-unsigned long debounceTime;    // debounce last check
-unsigned long lastKeyPressed;  // debounce last check
+// BEGIN CONSTANTS
 
 const byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };  // define the row pins
 const byte cols[COL_COUNT] = { 10, 16, 14 };     // define the column pins
-byte currentLayer = 0;
 
-//TODO Move to key class?
-byte keyDownCounter[COL_COUNT * ROW_COUNT];
-bool keySpamMode[COL_COUNT * ROW_COUNT];  // defines if a key is in spam mode or not
-
+// the names for each layer, which will be shown on the display
 const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
   "Layer1",
   "Layer2",
@@ -105,9 +100,9 @@ const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
   "Layer5",
 };
 
-// Uses as second index the key index which is the led index
+// the texts for each layer, which will be shown on the display for the button functions
+// uses as second index the key index
 const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
-  // Last defines max amount of chars for a name of a key
   { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
     "L0L2", "L0M2", "L0R2",
     "L0L3", "L0M3", "L0R3",
@@ -130,9 +125,10 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
     "L4L4", "L4M4", "L4R4" },
 };
 
+// the led layer rgb colors for each key
 const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
   {
-    { 0, 0, 0 },
+    { 0, 0, 0 },  //red, green, blue
     { 0, 0, 1 },
     { 0, 0, 2 },
     { 0, 0, 3 },
@@ -218,11 +214,24 @@ const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
   },
 };
 
-bool sleeping;  // check if the display is sleeping
+
+// END CONSTANTS
+
+unsigned long debounceTime;    // debounce last check
+unsigned long lastKeyPressed;  // last time a key got pressed (for the timeout functionality)
+
+byte currentLayer = 0;  //the current selected layer
+
+//TODO Move to key class?
+byte keyDownCounter[COL_COUNT * ROW_COUNT];  // contains the counter how long key got pressed. Is reset after reaching SPAM_SPEED and after reaching HOLD_DELAY the key ist marked as spam mode.
+bool keySpamMode[COL_COUNT * ROW_COUNT];     // defines if a key is in spam mode or not
+
+bool sleeping;  // check if the display & the led strip is sleeping
 
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
+// Key objects
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED object
@@ -231,13 +240,14 @@ U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE);
 void setup() {
   Serial.begin(9600);
 
+  // initialize the display
   display.setFont(u8g2_font_6x10_tr);
   //display.setI2CAddress(OLED_ADDR);
   display.begin();
 
   Serial.println(F("Display initialized"));
 
-  // initialize LED strip object
+  // initialize LED strip
   ledStrip.begin();
   Serial.println(F("LED-Strip initialized"));
 
@@ -249,9 +259,11 @@ void setup() {
   }
   Serial.println(F("Matrix initialized"));
 
+  // initialize keyboard
   Keyboard.begin(KeyboardLayout_de_DE);
   Serial.println(F("Keyboard initialized"));
 
+  // setup default values
   lastKeyPressed = millis();
   sleeping = false;
   refreshDisplay();
@@ -261,6 +273,7 @@ void setup() {
 void loop() {
   //Serial.println(freeMemory());
 
+  // debounced check of the key matrix
   if ((millis() - debounceTime) > DEBOUNCE_TIME) {
     readMatrix();
     debounceTime = millis();
@@ -271,6 +284,9 @@ void loop() {
   }
 }
 
+/**
+* Sets the components to the sleeping state if @see sleeping is false
+*/
 void sleepComponents() {
   if (!sleeping) {
     sleeping = true;
@@ -279,6 +295,9 @@ void sleepComponents() {
   }
 }
 
+/**
+* Wakes the components when @link sleeping is true
+*/
 void wakeComponents() {
   if (sleeping) {
     sleeping = false;
@@ -287,6 +306,9 @@ void wakeComponents() {
   }
 }
 
+/**
+* Updates the diplay texts using @link setDisplayText, if @link sleeping is false
+*/
 void refreshDisplay() {
   if (!sleeping) {
     display.firstPage();
@@ -296,17 +318,26 @@ void refreshDisplay() {
   }
 }
 
+/**
+* Forces the @link display into the sleeping state
+*/
 void sleepDisplay() {
   Serial.println(F("Display is going to sleep..."));
   display.sleepOn();
 }
 
+/**
+* Wakes the @link display from the sleeping state
+*/
 void wakeDisplay() {
   Serial.println(F("Waking up display..."));
   display.sleepOff();
   refreshDisplay();
 }
 
+/**
+* Print a string at a specific position on the display taking into account the text height and width
+*/
 void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
   int h = display.getFontAscent() - display.getFontDescent();
   int w = display.getStrWidth(buf);
@@ -323,6 +354,14 @@ void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
   display.print(buf);
 }
 
+/**
+* Writes the texts of the corresponding layer on the display
+* @see drawStringAtPosition
+* @see refreshDisplay
+* @see currentLayer
+* @see layerNames
+* @see layerButtonFunc
+*/
 void setDisplayText() {
   char layerBuf[LAYER_NAME_LENGTH + 1];
   progMemStrCpy(layerNames[currentLayer], layerBuf);
@@ -363,6 +402,10 @@ void setDisplayText() {
   drawStringAtPosition(actionBuf, RIGHT, ROW4);
 }
 
+/**
+* Sets the @link ledStrip leds to the current layer colors.
+* @see currentLayer
+*/
 void setLayerRGB() {
   for (byte k = 0; k < NUM_LEDS; k++) {
     ledStrip.setPixelColor(k, pgm_read_byte_near(&layerRGB[currentLayer][k][0]), pgm_read_byte_near(&layerRGB[currentLayer][k][1]), pgm_read_byte_near(&layerRGB[currentLayer][k][2]));
@@ -370,17 +413,27 @@ void setLayerRGB() {
   ledStrip.show();
 }
 
+/**
+* Forces the @link ledStrip into sleeping mode
+*/
 void sleepLEDStrip() {
   Serial.println("Leds are going to sleep...");
   ledStrip.clear();
   ledStrip.show();
 }
 
+/**
+* Wakes the @link ledStrip from the sleeping state
+*/
 void wakeLEDStrip() {
   Serial.println("Waking up leds...");
   setLayerRGB();
 }
 
+/**
+* Get the led index of the current key row and col
+* @return the led index as byte
+*/
 byte getLedIndex(byte rowIdx, byte colIdx) {
   // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
@@ -388,6 +441,12 @@ byte getLedIndex(byte rowIdx, byte colIdx) {
   return index;
 }
 
+/**
+* Scans the key matrix, if a key got pressed.
+* @see keys
+* @see keyPressed
+* @see resetKey
+*/
 void readMatrix() {
   // scan matrix
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
@@ -407,11 +466,22 @@ void readMatrix() {
   }
 }
 
+/**
+* Resets the key status when a key is released
+* @see keySpamMode
+* @see keyDownCounter
+*/
 void resetKey(byte keyIndex) {
   keySpamMode[keyIndex] = false;
   keyDownCounter[keyIndex] = 0;
 }
 
+/**
+* Is called after a key got pressed.
+* Handles the spam mode.
+* @see keySpamMode
+* @see keyDownCounter
+*/
 void keyPressed(Key key) {
   lastKeyPressed = millis();
   wakeComponents();
@@ -428,6 +498,22 @@ void keyPressed(Key key) {
     keyDownCounter[key.getIndex()]++;
 }
 
+/**
+* Calls the corresponding function of the key
+* @see handleLayerKeyPress
+* @see keyOnePressed
+* @see keyTwoPressed
+* @see keyThreePressed
+* @see keyFourPressed
+* @see keyFivePressed
+* @see keySixPressed
+* @see keySevenPressed
+* @see keyEightPressed
+* @see keyNinePressed
+* @see keyTenPressed
+* @see keyElevenPressed
+* @see keyTwelvePressed
+*/
 void handleKeyPress(Key key) {
   switch (key.getIndex()) {
     case LAYER_BACK_KEY:
@@ -476,6 +562,9 @@ void handleKeyPress(Key key) {
   }
 }
 
+/**
+* Handles the layer key functionalities and refreshed the @link display texts and @link ledStrip colors. (Layer: up, down, home)
+*/
 void handleLayerKeyPress(Key key) {
   switch (key.getIndex()) {
     case LAYER_BACK_KEY:
@@ -492,6 +581,9 @@ void handleLayerKeyPress(Key key) {
   setLayerRGB();
 }
 
+/**
+* Handles the key 1 actions for each layer
+*/
 void keyOnePressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -516,6 +608,9 @@ void keyOnePressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 2 actions for each layer
+*/
 void keyTwoPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -540,6 +635,9 @@ void keyTwoPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 3 actions for each layer
+*/
 void keyThreePressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -564,6 +662,9 @@ void keyThreePressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 4 actions for each layer
+*/
 void keyFourPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -588,6 +689,9 @@ void keyFourPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 5 actions for each layer
+*/
 void keyFivePressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -612,6 +716,9 @@ void keyFivePressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 6 actions for each layer
+*/
 void keySixPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -636,6 +743,9 @@ void keySixPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 7 actions for each layer
+*/
 void keySevenPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -660,6 +770,9 @@ void keySevenPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 8 actions for each layer
+*/
 void keyEightPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -684,6 +797,9 @@ void keyEightPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 9 actions for each layer
+*/
 void keyNinePressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -708,6 +824,9 @@ void keyNinePressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 10 actions for each layer
+*/
 void keyTenPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -732,6 +851,9 @@ void keyTenPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 11 actions for each layer
+*/
 void keyElevenPressed(Key key) {
   switch (currentLayer) {
     case 0:
@@ -756,6 +878,9 @@ void keyElevenPressed(Key key) {
   Keyboard.releaseAll();
 }
 
+/**
+* Handles the key 12 actions for each layer
+*/
 void keyTwelvePressed(Key key) {
   switch (currentLayer) {
     case 0:

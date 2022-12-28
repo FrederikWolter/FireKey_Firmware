@@ -1,3 +1,6 @@
+/**
+* Converts a hex value into seperate red, green and blue values
+*/
 void hexToRGB(String hexCode, int& r, int& g, int& b) {
   // Remove the '#' character from the hex code if it exists
   hexCode.replace("#", "");
@@ -24,6 +27,9 @@ void hexToRGB(String hexCode, int& r, int& g, int& b) {
   }
 }
 
+/**
+* Copies a string (str) which is stored in the progams memory into buf
+*/
 void progMemStrCpy(const char str[], char buf[]) {
   char c;
   byte i = 0;
