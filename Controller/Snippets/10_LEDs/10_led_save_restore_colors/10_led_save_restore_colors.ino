@@ -14,7 +14,7 @@
 #define NUM_LEDS 6  // number of LEDs in the strip
 
 // VARIABLES
-uint32_t lastLedValue[NUM_LEDS];
+uint32_t lastLedValue[NUM_LEDS];  // holdes the saved led color values to restore the after wakeup
 
 // LED strip object
 Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
