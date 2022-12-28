@@ -208,7 +208,7 @@ const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
 /**
 * Handles the key 1 actions for each layer
 */
-void keyOnePressed(Key key) {
+void keyOnePressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K1L0
@@ -235,7 +235,7 @@ void keyOnePressed(Key key) {
 /**
 * Handles the key 2 actions for each layer
 */
-void keyTwoPressed(Key key) {
+void keyTwoPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K2L0
@@ -262,7 +262,7 @@ void keyTwoPressed(Key key) {
 /**
 * Handles the key 3 actions for each layer
 */
-void keyThreePressed(Key key) {
+void keyThreePressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K3L0
@@ -289,7 +289,7 @@ void keyThreePressed(Key key) {
 /**
 * Handles the key 4 actions for each layer
 */
-void keyFourPressed(Key key) {
+void keyFourPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K4L0
@@ -316,7 +316,7 @@ void keyFourPressed(Key key) {
 /**
 * Handles the key 5 actions for each layer
 */
-void keyFivePressed(Key key) {
+void keyFivePressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K5L0
@@ -343,7 +343,7 @@ void keyFivePressed(Key key) {
 /**
 * Handles the key 6 actions for each layer
 */
-void keySixPressed(Key key) {
+void keySixPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K6L0
@@ -370,7 +370,7 @@ void keySixPressed(Key key) {
 /**
 * Handles the key 7 actions for each layer
 */
-void keySevenPressed(Key key) {
+void keySevenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K7L0
@@ -397,7 +397,7 @@ void keySevenPressed(Key key) {
 /**
 * Handles the key 8 actions for each layer
 */
-void keyEightPressed(Key key) {
+void keyEightPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K8L0
@@ -424,7 +424,7 @@ void keyEightPressed(Key key) {
 /**
 * Handles the key 9 actions for each layer
 */
-void keyNinePressed(Key key) {
+void keyNinePressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K9L0
@@ -451,7 +451,7 @@ void keyNinePressed(Key key) {
 /**
 * Handles the key 10 actions for each layer
 */
-void keyTenPressed(Key key) {
+void keyTenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K10L0
@@ -478,7 +478,7 @@ void keyTenPressed(Key key) {
 /**
 * Handles the key 11 actions for each layer
 */
-void keyElevenPressed(Key key) {
+void keyElevenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K11L0
@@ -505,7 +505,7 @@ void keyElevenPressed(Key key) {
 /**
 * Handles the key 12 actions for each layer
 */
-void keyTwelvePressed(Key key) {
+void keyTwelvePressed(Key *key) {
   switch (currentLayer) {
     case 0:
       //K12L0

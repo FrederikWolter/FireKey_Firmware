@@ -16,9 +16,7 @@
 *    -> is installed (arduino pro micro)
 *********************************************************************/
 
-//TODO move const to config file
 //TODO move led & keypress to key
-//TODO IFDEF DEBUG for serial print (debug.h)
 //TODO DEBUG_PRINTLN(F("xxx"));
 //TODO header split
 
@@ -27,10 +25,6 @@
 
 unsigned long debounceTime;    // debounce last check
 unsigned long lastKeyPressed;  // last time a key got pressed (for the timeout functionality)
-
-//TODO Move to key class!
-byte keyDownCounter[COL_COUNT * ROW_COUNT];  // contains the counter how long key got pressed. Is reset after reaching SPAM_SPEED and after reaching HOLD_DELAY the key ist marked as spam mode.
-bool keySpamMode[COL_COUNT * ROW_COUNT];     // defines if a key is in spam mode or not
 
 bool sleeping;  // check if the display & the led strip is sleeping
 
@@ -63,7 +57,7 @@ void setup() {
   // Setup key matrix
   for (byte r = 0; r < ROW_COUNT; r++) {
     for (byte c = 0; c < COL_COUNT; c++) {
-      keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip);
+      keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip, &handleKeyPress);
     }
   }
   DEBUG_PRINTLN(F("Matrix initialized"));
@@ -262,49 +256,10 @@ void readMatrix() {
 
     // is any column pulled to low due to a button being pressed?
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      // Get key object
-      Key key = keys[rowIndex][colIndex];
-
-      // Check if the key is pressed
-      if (key.update()) {  //TODO Rework
-        keyPressed(key);
-      } else if (keyDownCounter[key.getIndex()] != 0) {
-        resetKey(key.getIndex());
-      }
+      // Check if the key is pressed and handle the press
+      keys[rowIndex][colIndex].checkPressed();
     }
   }
-}
-
-/**
-* Resets the key status when a key is released
-* @see keySpamMode
-* @see keyDownCounter
-*/
-void resetKey(byte keyIndex) {
-  keySpamMode[keyIndex] = false;
-  keyDownCounter[keyIndex] = 0;
-}
-
-/**
-* Is called after a key got pressed.
-* Handles the spam mode.
-* @see keySpamMode
-* @see keyDownCounter
-*/
-void keyPressed(Key key) {
-  lastKeyPressed = millis();
-  wakeComponents();
-  //TODO Move to key class?
-  if (keyDownCounter[key.getIndex()] == 0) {
-    handleKeyPress(key);
-  } else if (keySpamMode[key.getIndex()] && keyDownCounter[key.getIndex()] > SPAM_SPEED) {
-    handleKeyPress(key);
-    keyDownCounter[key.getIndex()] = 0;
-  } else if (keyDownCounter[key.getIndex()] > HOLD_DELAY) {
-    keySpamMode[key.getIndex()] = true;
-  }
-  if (keyDownCounter[key.getIndex()] < 255)
-    keyDownCounter[key.getIndex()]++;
 }
 
 /**
@@ -323,8 +278,11 @@ void keyPressed(Key key) {
 * @see keyElevenPressed
 * @see keyTwelvePressed
 */
-void handleKeyPress(Key key) {  //pass this fnct to key
-  switch (key.getIndex()) {
+void handleKeyPress(Key *key) {  //pass this fnct to key
+  lastKeyPressed = millis();
+  wakeComponents();
+  //Serial.println(key.getIndex());
+  switch (key->getIndex()) {
     case LAYER_BACK_KEY:
     case LAYER_HOME_KEY:
     case LAYER_FORWARD_KEY:
@@ -374,8 +332,8 @@ void handleKeyPress(Key key) {  //pass this fnct to key
 /**
 * Handles the layer key functionalities and refreshed the @link display texts and @link ledStrip colors. (Layer: up, down, home)
 */
-void handleLayerKeyPress(Key key) {
-  switch (key.getIndex()) {
+void handleLayerKeyPress(Key *key) {
+  switch (key->getIndex()) {
     case LAYER_BACK_KEY:
       currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
       break;

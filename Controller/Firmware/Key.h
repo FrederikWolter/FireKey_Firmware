@@ -12,13 +12,18 @@ private:
   byte colPin;
   bool state;
   byte ledIndex;
+  byte keyDownCounter;  // contains the counter how long the key got pressed. is reset after reaching SPAM_SPEED and after reaching HOLD_DELAY the key ist marked as spam mode.
+  bool keySpamMode;     // defines if the key is in spam mode or not
   Adafruit_NeoPixel *ledStrip;
+  void (*keyPressedHandler)(Key*);
+
+  void resetSpam();
 
 public:
   Key();
-  Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip);
+  Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key*));
   bool getState();
-  bool update();
+  void checkPressed();
   void setLEDRGB(byte idx, uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(uint16_t red, uint16_t green, uint16_t blue);
   void setLEDRGB(String hexCode);
@@ -28,26 +33,42 @@ public:
 //TODO led on off default
 
 /**
-* Default constructor
+* Default constructor (required for array def)
 */
 Key::Key() {
   this->state = false;
+  this->keySpamMode = false;
+  this->keyDownCounter = 0;
 }
 
 /**
 * Main constructor
 */
-Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip) {
+Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key*)) {
   this->rowPin = row;
   this->colPin = col;
   this->ledIndex = ledIndex;
-  this->state = false;
   this->ledStrip = ledStrip;
+  this->keyPressedHandler = keyPressedHandler;
 
-  //Setup matrix (TODO Move out of key class?)
+  this->state = false;
+  this->keySpamMode = false;
+  this->keyDownCounter = 0;
+
+  //Setup matrix
   pinMode(colPin, INPUT_PULLUP);
   pinMode(rowPin, OUTPUT);
   digitalWrite(rowPin, HIGH);
+}
+
+/**
+* Resets the key status when the key is released
+* @see keySpamMode
+* @see keyDownCounter
+*/
+void Key::resetSpam() {
+  this->keySpamMode = false;
+  this->keyDownCounter = 0;
 }
 
 /**
@@ -60,16 +81,33 @@ bool Key::getState() {
 /**
 * Checks if the key is pressed or not and updates the key state
 */
-bool Key::update() {
+void Key::checkPressed() {
   //pull output row to low
   digitalWrite(this->rowPin, LOW);
-
   this->state = (digitalRead(this->colPin) == LOW);
 
   // pull output row high again
   digitalWrite(this->rowPin, HIGH);
 
-  return this->state;
+  if (this->state) {
+    if (this->keyDownCounter == 0) {
+      // call the key pressed handler function
+      (*this->keyPressedHandler)(this);
+    } else if (this->keySpamMode && this->keyDownCounter > SPAM_SPEED) {
+      // call the key pressed handler function and reset the down counter
+      (*this->keyPressedHandler)(this);
+      this->keyDownCounter = 0;
+    } else if (this->keyDownCounter > HOLD_DELAY) {
+      this->keySpamMode = true;
+    }
+    if (this->keyDownCounter < 255) {
+      this->keyDownCounter++;
+      Serial.println(this->keyDownCounter);
+    }
+
+  } else if (this->keyDownCounter != 0) {
+    this->resetSpam();
+  }
 }
 
 /**
