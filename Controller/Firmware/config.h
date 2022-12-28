@@ -99,7 +99,7 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
 };
 
 // the led layer rgb colors for each key
-const byte layerRGB[MAX_LAYER][15][3] PROGMEM = {
+const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
   {
     { 0, 0, 0 },  //red, green, blue
     { 0, 0, 1 },

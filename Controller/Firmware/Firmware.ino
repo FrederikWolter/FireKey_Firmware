@@ -16,7 +16,6 @@
 *    -> is installed (arduino pro micro)
 *********************************************************************/
 
-//TODO move led & keypress to key
 //TODO DEBUG_PRINTLN(F("xxx"));
 //TODO header split
 
@@ -70,7 +69,7 @@ void setup() {
   lastKeyPressed = millis();
   sleeping = false;
   refreshDisplay();
-  setLayerRGB();
+  setLEDDefaultValues();
 }
 
 void loop() {
@@ -206,31 +205,38 @@ void setDisplayText() {
 }
 
 /**
-* Sets the @link ledStrip leds to the current layer colors.
-* @see currentLayer
-*/
-void setLayerRGB() {
-  for (byte k = 0; k < NUM_LEDS; k++) {
-    ledStrip.setPixelColor(k, pgm_read_byte_near(&layerRGB[currentLayer][k][0]), pgm_read_byte_near(&layerRGB[currentLayer][k][1]), pgm_read_byte_near(&layerRGB[currentLayer][k][2]));
-  }
-  ledStrip.show();
-}
-
-/**
 * Forces the @link ledStrip into sleeping mode
 */
 void sleepLEDStrip() {
   DEBUG_PRINTLN("Leds are going to sleep...");
-  ledStrip.clear();
-  ledStrip.show();
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].ledOff();
+    }
+  }
 }
 
 /**
-* Wakes the @link ledStrip from the sleeping state
+* Wakes the @link ledStrip from the sleeping state and enables each led with it last color value
 */
 void wakeLEDStrip() {
   DEBUG_PRINTLN("Waking up leds...");
-  setLayerRGB();
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].ledOn();
+    }
+  }
+}
+
+/**
+* Sets the default color values to the leds and turns them on.
+*/
+void setLEDDefaultValues() {
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].ledDefault();
+    }
+  }
 }
 
 /**
@@ -344,5 +350,5 @@ void handleLayerKeyPress(Key *key) {
       currentLayer = HOME_LAYER;
   }
   refreshDisplay();
-  setLayerRGB();
+  setLEDDefaultValues();
 }
