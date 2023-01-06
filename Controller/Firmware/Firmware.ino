@@ -34,14 +34,13 @@ Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED object
-U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE);
+U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
 
 void setup() {
   DEBUG_BEGIN();
 
   // initialize the display
   display.setFont(u8g2_font_6x10_tr);
-  //display.setI2CAddress(OLED_ADDR);
   display.begin();
 
   DEBUG_PRINTLN(F("Display initialized"));

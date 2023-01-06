@@ -34,8 +34,6 @@
 #define LED_BRIGHT 128  // LED strip brightness (brightness = (percentage / 100) * 255)
 
 // Display
-#define OLED_RESET -1           // use no extra reset pin
-#define OLED_ADDR 0x3C          // i2c address of the first display
 #define MAX_KEY_LENGTH 5        // max length for a key action name
 #define LAYER_NAME_LENGTH 10    // max length for a layer name
 #define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display & the led strip is going to sleep
