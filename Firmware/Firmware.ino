@@ -41,36 +41,37 @@ U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
 void setup() {
   // initialize serial print if debug
   DEBUG_BEGIN();
-  DEBUG_PRINTLN(F("Startup with DEBUG enabled"));
+  DEBUG_PRINTLN("Startup with DEBUG enabled");
 
   // initialize display
   display.setFont(u8g2_font_6x10_tr);
   display.begin();
-  DEBUG_PRINTLN(F("Display initialized"));
+  DEBUG_PRINTLN("Display initialized");
 
   // initialize LED strip
   ledStrip.begin();
   ledStrip.setBrightness(LED_BRIGHT);
   ledStrip.show();
-  DEBUG_PRINTLN(F("LED-Strip initialized"));
+  DEBUG_PRINTLN("LED-Strip initialized");
 
   // initialize key matrix
   for (byte r = 0; r < ROW_COUNT; r++)
     for (byte c = 0; c < COL_COUNT; c++)
       keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip, &handleKeyPress);
-  DEBUG_PRINTLN(F("Matrix initialized"));
+  DEBUG_PRINTLN("Matrix initialized");
 
   // TODO fix Key documentation?
 
   // initialize keyboard
   Keyboard.begin(KeyboardLayout_de_DE);
-  DEBUG_PRINTLN(F("Keyboard initialized"));
+  DEBUG_PRINTLN("Keyboard initialized");
 
   // initialize start values
   lastKeyPress = millis();
   sleeping = false;
   refreshDisplay();
   setLedDefaultValues();
+  DEBUG_PRINTLN("Values initialized");
 }
 
 
@@ -296,7 +297,7 @@ void handleKeyPress(Key *key) {
       keyTwelvePressed(key);
       break;
     default:
-      DEBUG_PRINTLN(F("ERROR: Unkown key pressed"));
+      DEBUG_PRINTLN("ERROR: Unkown key pressed");
       break;
   }
 }
@@ -357,7 +358,7 @@ void wake() {
  * Forces @link display into sleep.
  */
 void sleepDisplay() {
-  DEBUG_PRINTLN(F("Display going to sleep..."));
+  DEBUG_PRINTLN("Display going to sleep...");
   display.sleepOn();
 }
 
@@ -365,7 +366,7 @@ void sleepDisplay() {
  * Wakes @link display from sleep.
  */
 void wakeDisplay() {
-  DEBUG_PRINTLN(F("Display waking up..."));
+  DEBUG_PRINTLN("Display waking up...");
   display.sleepOff();
   refreshDisplay();
 }

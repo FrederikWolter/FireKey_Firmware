@@ -8,9 +8,9 @@
   #define DEBUG_H
 
   #ifdef DEBUG
-    #define DEBUG_BEGIN() Serial.begin(9600);
-    #define DEBUG_PRINT(str) Serial.print(str)
-    #define DEBUG_PRINTLN(str) Serial.println(str)
+    #define DEBUG_BEGIN()       { Serial.begin(9600); while(!Serial); Serial.print(F("\n")); }
+    #define DEBUG_PRINT(str)    { Serial.print(F(str)); }
+    #define DEBUG_PRINTLN(str)  { Serial.println(F(str)); }
   #else
     #define DEBUG_BEGIN()
     #define DEBUG_PRINT(str)
