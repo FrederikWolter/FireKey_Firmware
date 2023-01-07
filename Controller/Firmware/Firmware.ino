@@ -16,8 +16,10 @@
 *    -> is installed (arduino pro micro)
 *********************************************************************/
 
-//TODO DEBUG_PRINTLN(F("xxx"));
-//TODO header split
+// TODO DEBUG_PRINTLN(F("xxx"));
+// TODO header split (.h & .cpp)
+// TODO change USB Device information? (Nice to have)
+// TODO Disable Onboard LEDs
 
 // LIBRARIES
 #include "Config.h"

@@ -1,8 +1,10 @@
 // Begin DEFINE CONSTANTS
 
+// TODO unused defs?
+
 // Keys
-#define ROW_COUNT 5       // number of rows
-#define COL_COUNT 3       // number of columns
+#define ROW_COUNT 3       // number of rows
+#define COL_COUNT 5       // number of columns
 #define SPAM_SPEED 15     // how often is a key pressed while holding it down
 #define HOLD_DELAY 100    // delay before a button is marked as held. max 255, otherwise change keyDownCounter to int
 #define DEBOUNCE_TIME 10  // Limit how often the metric is scanned.
@@ -57,10 +59,10 @@
 
 // BEGIN CONSTANTS
 
-const byte rows[ROW_COUNT] = { 5, 6, 7, 8, 9 };  // define the row pins
-const byte cols[COL_COUNT] = { 10, 16, 14 };     // define the column pins
+const byte rows[ROW_COUNT] = { 10, 16, 14 };  // define the row pins
+const byte cols[COL_COUNT] = { 5, 6, 7, 8, 9 };     // define the column pins
 
-byte currentLayer = 0;  //the current selected layer
+byte currentLayer = 0;  // the current selected layer
 
 // the names for each layer, which will be shown on the display
 const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
@@ -194,7 +196,7 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
 #include "Debug.h"
 #include "Basics.h"
 
-#include <MemoryFree.h>  //TODO remove
+// #include <MemoryFree.h>  //TODO remove
 #include <Keyboard.h>
 #include <Keyboard_de_DE.h>
 #include <KeyboardLayout.h>
