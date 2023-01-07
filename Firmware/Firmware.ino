@@ -35,7 +35,8 @@ Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED objects
 U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
-// TODO add secound display
+// TODO extract pint to config
+// TODO add secound display (software i2c)
 
 
 // ============ SETUP ============

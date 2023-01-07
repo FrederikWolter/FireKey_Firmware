@@ -25,6 +25,7 @@ public:
   
   bool getState();
   // TODO state allways HIGH in handler???
+  // TODO purpose of state?
   byte getIndex();
   void check();
   void setLedRGB(byte idx, byte red, byte green, byte blue);
