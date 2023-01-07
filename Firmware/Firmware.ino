@@ -76,7 +76,7 @@ void setup() {
 
 // ============ LOOP =============
 void loop() {
-  //DEBUG_PRINTLN(freeMemory());
+  // DEBUG_PRINTLN(freeMemory()); // TODO remove?
 
   // check if debounce time is over
   if ((millis() - lastRefresh) > DEBOUNCE_TIME) {
@@ -118,7 +118,7 @@ void refreshDisplay() {
 void setDisplayText() {
   // set layer text
   char layerBuf[LAYER_NAME_LENGTH + 1];   // buffer to read layer name to
-  progMemStrCpy(layerNames[currentLayer], layerBuf);
+  getProgMemStr(layerNames[currentLayer], layerBuf);
   drawText(layerBuf, CENTER, ROW0);
 
   // set lines
@@ -128,32 +128,32 @@ void setDisplayText() {
 
   // set key texts
   char actionBuf[MAX_KEY_LENGTH + 1];   // buffer to read key name to
-  progMemStrCpy(layerButtonFunc[currentLayer][0], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][0], actionBuf);
   drawText(actionBuf, LEFT, ROW1);
-  progMemStrCpy(layerButtonFunc[currentLayer][1], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][1], actionBuf);
   drawText(actionBuf, CENTER, ROW1);
-  progMemStrCpy(layerButtonFunc[currentLayer][2], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][2], actionBuf);
   drawText(actionBuf, RIGHT, ROW1);
 
-  progMemStrCpy(layerButtonFunc[currentLayer][3], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][3], actionBuf);
   drawText(actionBuf, LEFT, ROW2);
-  progMemStrCpy(layerButtonFunc[currentLayer][4], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][4], actionBuf);
   drawText(actionBuf, CENTER, ROW2);
-  progMemStrCpy(layerButtonFunc[currentLayer][5], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][5], actionBuf);
   drawText(actionBuf, RIGHT, ROW2);
 
-  progMemStrCpy(layerButtonFunc[currentLayer][6], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][6], actionBuf);
   drawText(actionBuf, LEFT, ROW3);
-  progMemStrCpy(layerButtonFunc[currentLayer][7], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][7], actionBuf);
   drawText(actionBuf, CENTER, ROW3);
-  progMemStrCpy(layerButtonFunc[currentLayer][8], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][8], actionBuf);
   drawText(actionBuf, RIGHT, ROW3);
 
-  progMemStrCpy(layerButtonFunc[currentLayer][9], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][9], actionBuf);
   drawText(actionBuf, LEFT, ROW4);
-  progMemStrCpy(layerButtonFunc[currentLayer][10], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][10], actionBuf);
   drawText(actionBuf, CENTER, ROW4);
-  progMemStrCpy(layerButtonFunc[currentLayer][11], actionBuf);
+  getProgMemStr(layerButtonFunc[currentLayer][11], actionBuf);
   drawText(actionBuf, RIGHT, ROW4);
 
   // TODO dynamic way?
