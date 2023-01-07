@@ -195,7 +195,7 @@ void drawText(const char *buf, byte xPosition, byte yPosition) {
 void setLedDefaultValues() {
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].ledDefault();
+      keys[rowIndex][colIndex].setLedDefault();
     }
   }
 }
@@ -225,7 +225,7 @@ void readMatrix() {
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       // check if key is pressed and handle press if necessary
-      keys[rowIndex][colIndex].checkPressed();
+      keys[rowIndex][colIndex].check();
     }
   }
 }
@@ -360,7 +360,7 @@ void sleepLEDStrip() {
   DEBUG_PRINTLN("LEDs going to sleep...");
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].ledOff();
+      keys[rowIndex][colIndex].setLedOff();
     }
   }
 }
@@ -370,9 +370,6 @@ void sleepLEDStrip() {
  */
 void wakeLEDStrip() {
   DEBUG_PRINTLN("LEDs waking up...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].ledOn();
-    }
-  }
+  ledStrip.clear();
+  ledStrip.show();
 }

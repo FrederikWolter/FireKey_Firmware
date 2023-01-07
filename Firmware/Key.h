@@ -8,172 +8,179 @@
 
 class Key {
 private:
-  byte rowPin;
-  byte colPin;
-  bool state;
-  byte ledIndex;
-  byte downCounter;                  // contains the counter how long the key got pressed. is reset after reaching SPAM_SPEED and after reaching HOLD_DELAY the key ist marked as spam mode.
-  bool spamMode;                     // defines if the key is in spam mode or not
-  Adafruit_NeoPixel *ledStrip;       // pointer to the global led-strip object
-  void (*keyPressedHandler)(Key *);  // handler function which is called if the key gets pressed
-  byte lastLEDColor[3];              // stores the last rgb values for the led
+  byte rowPin;                      // pin of row key belongs to 
+  byte colPin;                      // pin of column key belongs to
+  bool state;                       // TODO 
+  byte ledIndex;                    // index of corresponding led
+  byte downCounter;                 // how long is key pressed - used for hold and spam delays
+  bool spamMode;                    // key is in spam mode or not
+  byte lastColor[3];                // stores last rgb values of led
 
-  void resetSpam();
-  void setLastLEDColor();
+  Adafruit_NeoPixel *ledStrip;      // pointer to global led-strip object
+  void (*keyPressedHandler)(Key *); // handler function called if key gets pressed
 
 public:
   Key();
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key *));
+  
   bool getState();
-  void checkPressed();
-  void setLEDRGB(byte idx, byte red, byte green, byte blue);
-  void setLEDRGB(byte red, byte green, byte blue);
-  void setLEDRGB(String hexCode);
+  // TODO state allways HIGH in handler???
   byte getIndex();
-  void ledOn();
-  void ledOff();
-  void ledDefault();
+  void check();
+  void setLedRGB(byte idx, byte red, byte green, byte blue);
+  void setLedRGB(byte red, byte green, byte blue);
+  void setLedRGB(String hexCode);
+  void setLedOn();
+  void setLedOff();
+  void setLedDefault();
 };
 
-/**
-* Default constructor (required for array def)
-*/
-Key::Key() {
-  this->state = false;
-  this->spamMode = false;
-  this->downCounter = 0;
-}
+
+// ======== CONSTRUCTORS =========
 
 /**
-* Main constructor
-*/
+ * Empty constructor (required for array definition).
+ */
+Key::Key() { }
+
+/**
+ * Main constructor
+ */
 Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key *)) {
+  // save parameters
   this->rowPin = row;
   this->colPin = col;
   this->ledIndex = ledIndex;
   this->ledStrip = ledStrip;
   this->keyPressedHandler = keyPressedHandler;
 
+  // initialize values
   this->state = false;
   this->spamMode = false;
   this->downCounter = 0;
 
-  //Setup matrix
+  // setup matrix
   pinMode(colPin, INPUT_PULLUP);
   pinMode(rowPin, OUTPUT);
   digitalWrite(rowPin, HIGH);
 }
 
-/**
-* Resets the key status when the key is released
-* @see spamMode
-* @see downCounter
-*/
-void Key::resetSpam() {
-  this->spamMode = false;
-  this->downCounter = 0;
-}
+
+// =========== GETTER ============
 
 /**
-* Retruns the current state of the key, if it is pressed
-*/
+ * Retruns the current state of the key (if it is pressed).
+ */
 bool Key::getState() {
   return this->state;
 }
 
 /**
-* Checks if the key is pressed or not and updates the key state
-*/
-void Key::checkPressed() {
-  //pull output row to low
+ * Returns the led index of the key.
+ */
+byte Key::getIndex() {
+  return this->ledIndex;
+}
+
+
+// ============= KEY =============
+
+/**
+ * Checks if key is pressed,handles press and updates the key state.
+ */
+void Key::check() {
+  // pull output row to low
   digitalWrite(this->rowPin, LOW);
+
+  // read key pressed
   this->state = (digitalRead(this->colPin) == LOW);
 
-  // pull output row high again
+  // pull output row to high
   digitalWrite(this->rowPin, HIGH);
 
+  // handle result
+  // key pressed
   if (this->state) {
+    // key was not pressed before
     if (this->downCounter == 0) {
-      // call the key pressed handler function
-      (*this->keyPressedHandler)(this);
-    } else if (this->spamMode && this->downCounter > SPAM_DELAY) {
-      // call the key pressed handler function and reset the down counter
-      (*this->keyPressedHandler)(this);
-      this->downCounter = 0;
-    } else if (this->downCounter > HOLD_DELAY) {
-      this->spamMode = true;
+      (*this->keyPressedHandler)(this);   // call handler function
     }
-    if (this->downCounter < 255) {
-      this->downCounter++;
+    // key helt
+    else if (!this->spamMode && this->downCounter > HOLD_DELAY) {
+      (*this->keyPressedHandler)(this);   // call handler function
+      this->spamMode = true;  // enter spam mode
+      this->downCounter = 0;  // reset counter
     }
+    // key helt in spam mode
+    else if (this->spamMode && this->downCounter > SPAM_DELAY) {
+      (*this->keyPressedHandler)(this);   // call handler function
+      this->downCounter = 0;  // reset counter
+    } 
+    this->downCounter++;
 
+  // key not pressed, but was pressed before
   } else if (this->downCounter != 0) {
-    this->resetSpam();
+    this->spamMode = false;
+    this->downCounter = 0;
   }
 }
 
+
+// ============= LED =============
+
 /**
-* Sets the led color for a specific index
-*/
-void Key::setLEDRGB(byte idx, byte red, byte green, byte blue) {
+ * Sets the led color for a specific led index.
+ */
+void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
+  // TODO problem with lastColor?
+  
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }
 
 /**
-* Sets the led color for the key
-*/
-void Key::setLEDRGB(byte red, byte green, byte blue) {
-  lastLEDColor[0] = red;
-  lastLEDColor[1] = green;
-  lastLEDColor[2] = blue;
-  this->setLEDRGB(this->ledIndex, red, green, blue);
+ * Sets the led color for this key.
+ */
+void Key::setLedRGB(byte red, byte green, byte blue) {
+  lastColor[0] = red;
+  lastColor[1] = green;
+  lastColor[2] = blue;
+
+  this->setLedRGB(this->ledIndex, red, green, blue);
 }
 
 /**
-* Sets the led color for the key using a hex code
-*/
-void Key::setLEDRGB(String hexCode) {
+ * Sets the led color for this key using a hex code.
+ */
+void Key::setLedRGB(String hexCode) {
   int red, green, blue;
   hexToRGB(hexCode, red, green, blue);
-  this->setLEDRGB(red, green, blue);
+  this->setLedRGB(red, green, blue);
+}
+// TODO necessary maybe done by configurator software?
+
+/**
+ * Turns LED on with last RGB value.
+ */
+void Key::setLedOn() {
+  this->setLedRGB(lastColor[0], lastColor[1], lastColor[2]);
 }
 
 /**
-* Returns the (led) index of the key
-*/
-byte Key::getIndex() {
-  return this->ledIndex;
-}
-
-/**
-* Sets the last RGB value for the LED and activates it
-*/
-void Key::setLastLEDColor() {
-  this->setLEDRGB(lastLEDColor[0], lastLEDColor[1], lastLEDColor[2]);
-}
-
-/**
-* Sets the last RGB value for the LED and activates it
-*/
-void Key::ledOn() {
-  this->setLastLEDColor();
-}
-
-/**
-* Turns off the led
-*/
-void Key::ledOff() {
-  (*this->ledStrip).setPixelColor(this->getIndex(), 0, 0, 0);
+ * Turns off LED.
+ */
+void Key::setLedOff() {
+  (*this->ledStrip).setPixelColor(this->ledIndex, 0, 0, 0);
   (*this->ledStrip).show();
 }
 
 /**
-* Loads the default rgb value and activates the led with it
-*/
-void Key::ledDefault() {
-  lastLEDColor[0] = pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][0]);
-  lastLEDColor[1] = pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][1]);
-  lastLEDColor[2] = pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][2]);
-  this->setLastLEDColor();
+ * Loads default rgb value and activates the led with it.
+ */
+void Key::setLedDefault() {
+  this->setLedRGB(
+    pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][0]),
+    pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][1]),
+    pgm_read_byte_near(&defaultLEDColors[currentLayer][this->ledIndex][2])
+  );
 }
