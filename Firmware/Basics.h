@@ -43,8 +43,8 @@ void getProgMemStr(const char str[], char dest[]) {
   char c;
   byte i = 0;
   while ((c = pgm_read_byte(str++))) {
-    buf[i] = c;
+    dest[i] = c;
     i++;
   }
-  buf[i] = '\0';
+  dest[i] = '\0';
 }
