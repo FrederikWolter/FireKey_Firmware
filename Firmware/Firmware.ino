@@ -1,27 +1,22 @@
-/*********************************************************************
-* FIREKEY - PROJECT
-* 
-* Firmware Version 0.5.1V
+/*************************************************************************
+* FIREKEY-PROJECT
+* Firmware Version 1.0.0
 * 
 * Required libs:
-* - Keyboard(https://github.com/arduino-libraries/Keyboard)
-*   -> can be installed via arduino ide (defauled installed)
-* - USBHost
-*   -> can be installed via arduino ide
-* - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel) 
-*    -> can be installed via Arduino IDE
-* - U8g2 Lib(https://github.com/olikraus/u8g2)
-*    -> can be installed via Arduino IDE
-* - avr/pgmspace lib
-*    -> is installed (arduino pro micro)
-*********************************************************************/
+* - Keyboard          (https://github.com/arduino-libraries/Keyboard) 
+* - USBHost           (https://github.com/arduino-libraries/USBHost)
+* - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel)
+* - U8g2              (https://github.com/olikraus/u8g2)
+* - avr/pgmspace lib  (part of Pro Micro Board - preinstalled)
+* -> can all be installed via Arduino IDE library manager
+*************************************************************************/
 
 // TODO DEBUG_PRINTLN(F("xxx"));
 // TODO header split (.h & .cpp)
 // TODO change USB Device information? (Nice to have)
 // TODO Disable Onboard LEDs
 
-// LIBRARIES
+// LIBRARIES & CONFIG
 #include "Config.h"
 
 unsigned long debounceTime;    // debounce last check
