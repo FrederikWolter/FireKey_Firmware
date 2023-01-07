@@ -4,74 +4,79 @@
 * TODO
 *************************************************************************/
 
-// Begin DEFINE CONSTANTS
-
 // TODO unused defs?
 
-// Keys
-#define ROW_COUNT 3       // number of rows
-#define COL_COUNT 5       // number of columns
-#define SPAM_SPEED 15     // how often is a key pressed while holding it down
-#define HOLD_DELAY 100    // delay before a button is marked as held. max 255, otherwise change keyDownCounter to int
-#define DEBOUNCE_TIME 10  // Limit how often the metric is scanned.
+// ========= DEFINITIONS =========
+
+// debugging
+#define DEBUG
+
+// Matrix
+#define ROW_COUNT 3           // number of rows
+#define COL_COUNT 5           // number of columns
+
+// Timing
+#define SPAM_DELAY 15         // delay between actions while holding key pressed in spam mode
+#define HOLD_DELAY 100        // delay before button enters spam mode (max. 255)
+#define DEBOUNCE_DELAY 10     // delay between matrix scans (prevent bouncing atifacts)
+#define SLEEP_DELAY 60        // delay in seconds before display & led strip is going to sleep
 
 // Layers
-#define LAYER_BACK_KEY 2     // define the back button led index
-#define LAYER_HOME_KEY 1     // define the home button led index
-#define LAYER_FORWARD_KEY 0  // define the forward button led index
-#define MAX_LAYER 5          // amount of available layers
-#define HOME_LAYER 0         // the default layer after the home button is pressed
+#define MAX_LAYER 5           // number of available layers
+#define HOME_LAYER 0          // default layer after home button is pressed
 
-// Button constants defining the led index
-#define KEY_1 3
-#define KEY_2 4
-#define KEY_3 5
-#define KEY_4 8
-#define KEY_5 7
+// Keys (led index - see schematic)
+#define KEY_LAYER_UP 0
+#define KEY_LAYER_HOME 9  
+#define KEY_LAYER_DOWN 10          
+#define KEY_1 4
+#define KEY_2 3
+#define KEY_3 2
+#define KEY_4 1
+#define KEY_5 5
 #define KEY_6 6
-#define KEY_7 9
-#define KEY_8 10
-#define KEY_9 11
-#define KEY_10 14
-#define KEY_11 13
-#define KEY_12 12
+#define KEY_7 7
+#define KEY_8 8
+#define KEY_9 14
+#define KEY_10 13
+#define KEY_11 12
+#define KEY_12 11
 
-// Led
-#define NUM_LEDS 15     // number of LEDs in the strip
-#define LED_PIN 21      // A3 - pin connected to DIN of the LED strip
-#define LED_BRIGHT 128  // LED strip brightness (brightness = (percentage / 100) * 255)
+// LED strip
+#define LED_COUNT 15          // number of LEDs in the strip
+#define LED_PIN 21            // pin connected to DIN of LED strip (A3)
+#define LED_BRIGHT 128        // brightness 0-255 (brightness = (percentage / 100) * 255)
 
 // Display
-#define MAX_KEY_LENGTH 5        // max length for a key action name
-#define LAYER_NAME_LENGTH 10    // max length for a layer name
-#define SLEEP_DELAY_SECONDS 60  // delay in seconds before the display & the led strip is going to sleep
+#define MAX_KEY_LENGTH 5      // max length for a key name
+#define MAX_LAYER_LENGTH 10   // max length for a layer name
 
-// Positions for the texts on the display
-#define LEFT 0
-#define VLINE1 41
-#define CENTER 64
-#define VLINE2 85
-#define RIGHT 127
-#define TOP 14
-#define ROW0 2
-#define HLINE1 14
+// Positions on the display
+#define LEFT 0                // text alignment left & start of horizontal line
+#define CENTER 64             // text alignment center
+#define RIGHT 127             // text alignment right & end of hoizonal line
+#define TOP 14                // start of vertical lines
+#define BOTTOM 63             // end of vertical lines
+
+#define VLINE1 41             // y position of first vertical line
+#define VLINE2 85             // y position of secound vertical line
+#define HLINE1 14             // x position of horizontal line
+
+#define ROW0 2                // row x values
 #define ROW1 16
 #define ROW2 28
 #define ROW3 40
 #define ROW4 52
-#define BOTTOM 63
 
-// End DEFINE CONSTANTS
 
-// BEGIN CONSTANTS
+// ========== CONSTANTS ==========
+const byte rows[ROW_COUNT] = { 10, 16, 14 };    // row pins - row0, row1, ...
+const byte cols[COL_COUNT] = { 9, 8, 7, 6, 5 }; // column pins - col0, col1, ...
 
-const byte rows[ROW_COUNT] = { 10, 16, 14 };  // define the row pins
-const byte cols[COL_COUNT] = { 5, 6, 7, 8, 9 };     // define the column pins
+byte currentLayer = 0;        // current selected layer
 
-byte currentLayer = 0;  // the current selected layer
-
-// the names for each layer, which will be shown on the display
-const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
+// display-names of layers
+const char layerNames[MAX_LAYER][MAX_LAYER_LENGTH] PROGMEM = {
   "Layer1",
   "Layer2",
   "Layer3",
@@ -79,8 +84,8 @@ const char layerNames[MAX_LAYER][LAYER_NAME_LENGTH] PROGMEM = {
   "Layer5",
 };
 
-// the texts for each layer, which will be shown on the display for the button functions
-// uses as second index the key index
+// TODO change this with new layout
+// display-names of keys for each layer (uses key index)
 const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
   { "L0L1", "L0M1", "L0R1",  // name: Layer 0 Left Button Row 1; Layer 0 Middle Button Row 1; Layer 0 Middle Button Row 1
     "L0L2", "L0M2", "L0R2",
@@ -104,7 +109,7 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH] PROGMEM = {
     "L4L4", "L4M4", "L4R4" },
 };
 
-// the led layer rgb colors for each key
+// led rgb colors for each layer and key (led index)
 const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
   {
     { 0, 0, 0 },  //red, green, blue
@@ -193,27 +198,23 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
   },
 };
 
-// END CONSTANTS
 
-//enable debugging
-#define DEBUG
-
+// ============ LIBS =============
 #include <avr/pgmspace.h>
-#include "Debug.h"
-#include "Basics.h"
-
-// #include <MemoryFree.h>  //TODO remove
+// #include <MemoryFree.h>  //TODO remove?
 #include <Keyboard.h>
 #include <Keyboard_de_DE.h>
 #include <KeyboardLayout.h>
 #include <Adafruit_NeoPixel.h>
 #include <U8g2lib.h>
 
+#include "Debug.h"
+#include "Basics.h"
 #include "Key.h"
 
 /**
-* Handles the key 1 actions for each layer
-*/
+ * Handles the key 1 actions for each layer.
+ */
 void keyOnePressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -231,16 +232,12 @@ void keyOnePressed(Key *key) {
     case 4:
       //K1L4
       break;
-    case 5:
-      //K1L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 2 actions for each layer
-*/
+ * Handles the key 2 actions for each layer.
+ */
 void keyTwoPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -258,16 +255,12 @@ void keyTwoPressed(Key *key) {
     case 4:
       //K2L4
       break;
-    case 5:
-      //K2L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 3 actions for each layer
-*/
+ * Handles the key 3 actions for each layer
+ */
 void keyThreePressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -285,16 +278,12 @@ void keyThreePressed(Key *key) {
     case 4:
       //K3L4
       break;
-    case 5:
-      //K3L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 4 actions for each layer
-*/
+ * Handles the key 4 actions for each layer
+ */
 void keyFourPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -312,16 +301,12 @@ void keyFourPressed(Key *key) {
     case 4:
       //K4L4
       break;
-    case 5:
-      //K4L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 5 actions for each layer
-*/
+ * Handles the key 5 actions for each layer
+ */
 void keyFivePressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -339,16 +324,12 @@ void keyFivePressed(Key *key) {
     case 4:
       //K5L4
       break;
-    case 5:
-      //K5L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 6 actions for each layer
-*/
+ * Handles the key 6 actions for each layer
+ */
 void keySixPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -366,16 +347,12 @@ void keySixPressed(Key *key) {
     case 4:
       //K6L4
       break;
-    case 5:
-      //K6L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 7 actions for each layer
-*/
+ * Handles the key 7 actions for each layer
+ */
 void keySevenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -393,16 +370,12 @@ void keySevenPressed(Key *key) {
     case 4:
       //K7L4
       break;
-    case 5:
-      //K7L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 8 actions for each layer
-*/
+ * Handles the key 8 actions for each layer
+ */
 void keyEightPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -420,16 +393,12 @@ void keyEightPressed(Key *key) {
     case 4:
       //K8L4
       break;
-    case 5:
-      //K8L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 9 actions for each layer
-*/
+ * Handles the key 9 actions for each layer
+ */
 void keyNinePressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -447,16 +416,12 @@ void keyNinePressed(Key *key) {
     case 4:
       //K9L4
       break;
-    case 5:
-      //K9L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 10 actions for each layer
-*/
+ * Handles the key 10 actions for each layer
+ */
 void keyTenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -474,16 +439,12 @@ void keyTenPressed(Key *key) {
     case 4:
       //K10L4
       break;
-    case 5:
-      //K10L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 11 actions for each layer
-*/
+ * Handles the key 11 actions for each layer
+ */
 void keyElevenPressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -501,16 +462,12 @@ void keyElevenPressed(Key *key) {
     case 4:
       //K11L4
       break;
-    case 5:
-      //K11L5
-      break;
   }
-  Keyboard.releaseAll();
 }
 
 /**
-* Handles the key 12 actions for each layer
-*/
+ * Handles the key 12 actions for each layer
+ */
 void keyTwelvePressed(Key *key) {
   switch (currentLayer) {
     case 0:
@@ -528,9 +485,5 @@ void keyTwelvePressed(Key *key) {
     case 4:
       //K12L4
       break;
-    case 5:
-      //K12L5
-      break;
   }
-  Keyboard.releaseAll();
 }

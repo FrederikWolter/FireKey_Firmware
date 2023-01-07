@@ -96,7 +96,7 @@ void Key::checkPressed() {
     if (this->downCounter == 0) {
       // call the key pressed handler function
       (*this->keyPressedHandler)(this);
-    } else if (this->spamMode && this->downCounter > SPAM_SPEED) {
+    } else if (this->spamMode && this->downCounter > SPAM_DELAY) {
       // call the key pressed handler function and reset the down counter
       (*this->keyPressedHandler)(this);
       this->downCounter = 0;

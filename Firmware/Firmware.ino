@@ -15,6 +15,7 @@
 // TODO header split (.h & .cpp)
 // TODO change USB Device information? (Nice to have)
 // TODO Disable Onboard LEDs
+// TODO fadeing LEDs?
 
 
 // ===== LIBRARIES & CONFIG ======
@@ -27,7 +28,7 @@ unsigned long lastKeyPress;     // last time a key pressed (for timeout function
 bool sleeping;                  // is display & led strip sleeping?
 
 // LED strip object
-Adafruit_NeoPixel ledStrip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // Key objects
 Key keys[ROW_COUNT][COL_COUNT];
@@ -80,13 +81,13 @@ void loop() {
   // DEBUG_PRINTLN(freeMemory()); // TODO remove?
 
   // check if debounce time is over
-  if ((millis() - lastRefresh) > DEBOUNCE_TIME) {
+  if ((millis() - lastRefresh) > DEBOUNCE_DELAY) {
     readMatrix();
     lastRefresh = millis();
   }
 
   // check if timout time is over
-  if ((millis() - lastKeyPress) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
+  if ((millis() - lastKeyPress) > ((long)SLEEP_DELAY * 1000)) {
     sleep();
   }
 }
@@ -118,7 +119,7 @@ void refreshDisplay() {
  */
 void setDisplayText() {
   // set layer text
-  char layerBuf[LAYER_NAME_LENGTH + 1];   // buffer to read layer name to
+  char layerBuf[MAX_LAYER_LENGTH + 1];   // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
   drawText(layerBuf, CENTER, ROW0);
 
@@ -251,14 +252,20 @@ void handleKeyPress(Key *key) {
   wake();
 
   switch (key->getIndex()) {
-    case LAYER_FORWARD_KEY:
-      keyUpPressed(key);
+    case KEY_LAYER_UP:
+      currentLayer = (currentLayer + 1) % MAX_LAYER;
+      refreshDisplay();
+      setLedDefaultValues();
       break;
-    case LAYER_HOME_KEY:
-      keyHomePressed(key);
+    case KEY_LAYER_HOME:
+      currentLayer = HOME_LAYER;
+      refreshDisplay();
+      setLedDefaultValues();
       break;
-    case LAYER_BACK_KEY:
-      keyDownPressed(key);
+    case KEY_LAYER_DOWN:
+      currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
+      refreshDisplay();
+      setLedDefaultValues();
       break;
     case KEY_1:
       keyOnePressed(key);
@@ -300,33 +307,8 @@ void handleKeyPress(Key *key) {
       DEBUG_PRINTLN("ERROR: Unkown key pressed");
       break;
   }
-}
 
-/**
- * Handles the layer up key action.
- */
-void keyUpPressed(Key *key) {
-  currentLayer = (currentLayer + 1) % MAX_LAYER;
-  refreshDisplay();
-  setLedDefaultValues();
-}
-
-/**
- * Handles the layer down key action.
- */
-void keyDownPressed(Key *key) {
-  currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
-  refreshDisplay();
-  setLedDefaultValues();
-}
-
-/**
- * Handles the home key action.
- */
-void keyHomePressed(Key *key) {
-  currentLayer = HOME_LAYER;
-  refreshDisplay();
-  setLedDefaultValues();
+  Keyboard.releaseAll();  // protection against unwanted spam
 }
 
 
