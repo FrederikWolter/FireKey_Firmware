@@ -15,7 +15,7 @@
 // TODO header split (.h & .cpp)
 // TODO change USB Device information? (Nice to have)
 // TODO Disable Onboard LEDs
-// TODO fadeing LEDs?
+// TODO fading LEDs?
 
 
 // ===== LIBRARIES & CONFIG ======
@@ -36,7 +36,7 @@ Key keys[ROW_COUNT][COL_COUNT];
 // OLED objects
 U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
 // TODO extract pint to config
-// TODO add secound display (software i2c)
+// TODO add second display (software i2c)
 
 
 // ============ SETUP ============
@@ -97,7 +97,7 @@ void loop() {
 // ========== DISPLAY ============
 
 /**
- * Updates diplay using @link setDisplayText, if @link sleeping is false.
+ * Updates display using @link setDisplayText, if @link sleeping is false.
  */
 void refreshDisplay() {
   if (!sleeping) {
@@ -107,7 +107,7 @@ void refreshDisplay() {
     } while (display.nextPage());
   }
 
-  // TODO make shure this is efficient?
+  // TODO make sure this is efficient?
 }
 
 /**
@@ -184,14 +184,14 @@ void drawText(const char *buf, byte xPosition, byte yPosition) {
   // draw text
   display.print(buf);
 
-  // TODO use e.g. enom with custom values for text 'alignment'? and maybe ROWs too?
+  // TODO use e.g. enum with custom values for text 'alignment'? and maybe ROWs too?
 }
 
 
 // ============ LEDs =============
 
 /**
- * Tunrs all LEDs on and sets their default color according to the current layer.
+ * Turns all LEDs on and sets their default color according to the current layer.
  */
 void setLedDefaultValues() {
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
@@ -222,7 +222,7 @@ byte getLedIndex(byte rowIdx, byte colIdx) {
  * @see resetKey
  */
 void readMatrix() {
-  // iterate throught matrix
+  // iterate through matrix
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       // check if key is pressed and handle press if necessary
@@ -305,7 +305,7 @@ void handleKeyPress(Key *key) {
       keyTwelvePressed(key);
       break;
     default:
-      DEBUG_PRINTLN("ERROR: Unkown key pressed");
+      DEBUG_PRINTLN("ERROR: Unknown key pressed");
       break;
   }
 

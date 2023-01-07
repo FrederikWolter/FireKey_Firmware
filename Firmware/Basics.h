@@ -7,7 +7,7 @@
 // TODO check if file is needed?
 
 /**
- * Converts a color hex value into seperate red, green and blue values.
+ * Converts a color hex value into separate red, green and blue values.
  */
 void hexToRGB(String hexCode, int& r, int& g, int& b) {
   // remove the '#' character from the hex code if it exists
@@ -37,7 +37,7 @@ void hexToRGB(String hexCode, int& r, int& g, int& b) {
 // TODO check if needed here or in configurator software?
 
 /**
- * Copies a string from the progam memory into the destinantion.
+ * Copies a string from the program memory into the destination.
  */
 void getProgMemStr(const char str[], char dest[]) {
   char c;

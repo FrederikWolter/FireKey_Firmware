@@ -18,7 +18,7 @@
 // Timing
 #define SPAM_DELAY 15         // delay between actions while holding key pressed in spam mode
 #define HOLD_DELAY 100        // delay before button enters spam mode (max. 255)
-#define DEBOUNCE_DELAY 10     // delay between matrix scans (prevent bouncing atifacts)
+#define DEBOUNCE_DELAY 10     // delay between matrix scans (prevent bouncing artifacts)
 #define SLEEP_DELAY 60        // delay in seconds before display & led strip is going to sleep
 
 // Layers
@@ -54,12 +54,12 @@
 // Positions on the display
 #define LEFT 0                // text alignment left & start of horizontal line
 #define CENTER 64             // text alignment center
-#define RIGHT 127             // text alignment right & end of hoizonal line
+#define RIGHT 127             // text alignment right & end of horizontal line
 #define TOP 14                // start of vertical lines
 #define BOTTOM 63             // end of vertical lines
 
 #define VLINE1 41             // y position of first vertical line
-#define VLINE2 85             // y position of secound vertical line
+#define VLINE2 85             // y position of second vertical line
 #define HLINE1 14             // x position of horizontal line
 
 #define ROW0 2                // row x values

@@ -24,7 +24,7 @@ public:
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key *));
   
   bool getState();
-  // TODO state allways HIGH in handler???
+  // TODO state always HIGH in handler???
   // TODO purpose of state?
   byte getIndex();
   void check();
@@ -70,7 +70,7 @@ Key::Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*
 // =========== GETTER ============
 
 /**
- * Retruns the current state of the key (if it is pressed).
+ * Returns the current state of the key (if it is pressed).
  */
 bool Key::getState() {
   return this->state;
@@ -106,13 +106,13 @@ void Key::check() {
     if (this->downCounter == 0) {
       (*this->keyPressedHandler)(this);   // call handler function
     }
-    // key helt
+    // key held
     else if (!this->spamMode && this->downCounter > HOLD_DELAY) {
       (*this->keyPressedHandler)(this);   // call handler function
       this->spamMode = true;  // enter spam mode
       this->downCounter = 0;  // reset counter
     }
-    // key helt in spam mode
+    // key held in spam mode
     else if (this->spamMode && this->downCounter > SPAM_DELAY) {
       (*this->keyPressedHandler)(this);   // call handler function
       this->downCounter = 0;  // reset counter
