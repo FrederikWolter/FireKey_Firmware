@@ -7,227 +7,190 @@
 * - USBHost           (https://github.com/arduino-libraries/USBHost)
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel)
 * - U8g2              (https://github.com/olikraus/u8g2)
-* - avr/pgmspace lib  (part of Pro Micro Board - preinstalled)
+* - avr/pgmspace      (part of Pro Micro Board - preinstalled)
 * -> can all be installed via Arduino IDE library manager
 *************************************************************************/
 
-// TODO DEBUG_PRINTLN(F("xxx"));
+// TODO more DEBUG_PRINTLN(F("xxx"));
 // TODO header split (.h & .cpp)
 // TODO change USB Device information? (Nice to have)
 // TODO Disable Onboard LEDs
 
-// LIBRARIES & CONFIG
+
+// ===== LIBRARIES & CONFIG ======
 #include "Config.h"
 
-unsigned long debounceTime;    // debounce last check
-unsigned long lastKeyPressed;  // last time a key got pressed (for the timeout functionality)
 
-bool sleeping;  // check if the display & the led strip is sleeping
+// ========== VARIABLES ==========
+unsigned long lastRefresh;      // last checked matrix (for debouncing)
+unsigned long lastKeyPress;     // last time a key pressed (for timeout functionality)
+bool sleeping;                  // is display & led strip sleeping?
 
 // LED strip object
-Adafruit_NeoPixel ledStrip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel ledStrip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // Key objects
 Key keys[ROW_COUNT][COL_COUNT];
 
-// OLED object
+// OLED objects
 U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
+// TODO add secound display
 
+
+// ============ SETUP ============
 void setup() {
+  // initialize serial print if debug
   DEBUG_BEGIN();
+  DEBUG_PRINTLN(F("Startup with DEBUG enabled"));
 
-  // initialize the display
+  // initialize display
   display.setFont(u8g2_font_6x10_tr);
   display.begin();
-
   DEBUG_PRINTLN(F("Display initialized"));
 
   // initialize LED strip
   ledStrip.begin();
-  // set the led brightness
   ledStrip.setBrightness(LED_BRIGHT);
   ledStrip.show();
   DEBUG_PRINTLN(F("LED-Strip initialized"));
 
-  // Setup key matrix
-  for (byte r = 0; r < ROW_COUNT; r++) {
-    for (byte c = 0; c < COL_COUNT; c++) {
+  // initialize key matrix
+  for (byte r = 0; r < ROW_COUNT; r++)
+    for (byte c = 0; c < COL_COUNT; c++)
       keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip, &handleKeyPress);
-    }
-  }
   DEBUG_PRINTLN(F("Matrix initialized"));
+
+  // TODO fix Key documentation?
 
   // initialize keyboard
   Keyboard.begin(KeyboardLayout_de_DE);
   DEBUG_PRINTLN(F("Keyboard initialized"));
 
-  // setup default values
-  lastKeyPressed = millis();
+  // initialize start values
+  lastKeyPress = millis();
   sleeping = false;
   refreshDisplay();
-  setLEDDefaultValues();
+  setLedDefaultValues();
 }
 
+
+// ============ LOOP =============
 void loop() {
   //DEBUG_PRINTLN(freeMemory());
 
-  // debounced check of the key matrix
-  if ((millis() - debounceTime) > DEBOUNCE_TIME) {
+  // check if debounce time is over
+  if ((millis() - lastRefresh) > DEBOUNCE_TIME) {
     readMatrix();
-    debounceTime = millis();
+    lastRefresh = millis();
   }
 
-  if ((millis() - lastKeyPressed) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
-    sleepComponents();
-  }
-}
-
-/**
-* Sets the components to the sleeping state if @see sleeping is false
-*/
-void sleepComponents() {
-  if (!sleeping) {
-    sleeping = true;
-    sleepDisplay();
-    sleepLEDStrip();
+  // check if timout time is over
+  if ((millis() - lastKeyPress) > ((long)SLEEP_DELAY_SECONDS * 1000)) {
+    sleep();
   }
 }
 
-/**
-* Wakes the components when @link sleeping is true
-*/
-void wakeComponents() {
-  if (sleeping) {
-    sleeping = false;
-    wakeDisplay();
-    wakeLEDStrip();
-  }
-}
+
+// ========== DISPLAY ============
 
 /**
-* Updates the diplay texts using @link setDisplayText, if @link sleeping is false
-*/
+ * Updates diplay using @link setDisplayText, if @link sleeping is false.
+ */
 void refreshDisplay() {
   if (!sleeping) {
-    display.firstPage();
+    display.firstPage();  // way of reducing RAM usage
     do {
       setDisplayText();
     } while (display.nextPage());
   }
+
+  // TODO make shure this is efficient?
 }
 
 /**
-* Forces the @link display into the sleeping state
-*/
-void sleepDisplay() {
-  DEBUG_PRINTLN(F("Display is going to sleep..."));
-  display.sleepOn();
-}
-
-/**
-* Wakes the @link display from the sleeping state
-*/
-void wakeDisplay() {
-  DEBUG_PRINTLN(F("Waking up display..."));
-  display.sleepOff();
-  refreshDisplay();
-}
-
-/**
-* Print a string at a specific position on the display taking into account the text height and width
-*/
-void drawStringAtPosition(const char *buf, byte xPosition, byte yPosition) {
-  int h = display.getFontAscent() - display.getFontDescent();
-  int w = display.getStrWidth(buf);
-
-  if (xPosition == LEFT) {
-    display.setCursor(LEFT, yPosition + h);
-  } else if (xPosition == CENTER) {
-    int xVal = CENTER - w / 2;
-    display.setCursor(xVal, yPosition + h);
-  } else if (xPosition == RIGHT) {
-    int xVal = RIGHT - w;
-    display.setCursor(xVal, yPosition + h);
-  }
-  display.print(buf);
-}
-
-/**
-* Writes the texts of the corresponding layer on the display
-* @see drawStringAtPosition
-* @see refreshDisplay
-* @see currentLayer
-* @see layerNames
-* @see layerButtonFunc
-*/
+ * Writes texts of corresponding layer on the display.
+ * @see drawText
+ * @see refreshDisplay
+ * @see currentLayer
+ * @see layerNames
+ * @see layerButtonFunc
+ */
 void setDisplayText() {
-  char layerBuf[LAYER_NAME_LENGTH + 1];
+  // set layer text
+  char layerBuf[LAYER_NAME_LENGTH + 1];   // buffer to read layer name to
   progMemStrCpy(layerNames[currentLayer], layerBuf);
-  drawStringAtPosition(layerBuf, CENTER, ROW0);
+  drawText(layerBuf, CENTER, ROW0);
 
+  // set lines
   display.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
   display.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
   display.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
 
-  char actionBuf[MAX_KEY_LENGTH + 1];
-
+  // set key texts
+  char actionBuf[MAX_KEY_LENGTH + 1];   // buffer to read key name to
   progMemStrCpy(layerButtonFunc[currentLayer][0], actionBuf);
-  drawStringAtPosition(actionBuf, LEFT, ROW1);
+  drawText(actionBuf, LEFT, ROW1);
   progMemStrCpy(layerButtonFunc[currentLayer][1], actionBuf);
-  drawStringAtPosition(actionBuf, CENTER, ROW1);
+  drawText(actionBuf, CENTER, ROW1);
   progMemStrCpy(layerButtonFunc[currentLayer][2], actionBuf);
-  drawStringAtPosition(actionBuf, RIGHT, ROW1);
+  drawText(actionBuf, RIGHT, ROW1);
 
   progMemStrCpy(layerButtonFunc[currentLayer][3], actionBuf);
-  drawStringAtPosition(actionBuf, LEFT, ROW2);
+  drawText(actionBuf, LEFT, ROW2);
   progMemStrCpy(layerButtonFunc[currentLayer][4], actionBuf);
-  drawStringAtPosition(actionBuf, CENTER, ROW2);
+  drawText(actionBuf, CENTER, ROW2);
   progMemStrCpy(layerButtonFunc[currentLayer][5], actionBuf);
-  drawStringAtPosition(actionBuf, RIGHT, ROW2);
+  drawText(actionBuf, RIGHT, ROW2);
 
   progMemStrCpy(layerButtonFunc[currentLayer][6], actionBuf);
-  drawStringAtPosition(actionBuf, LEFT, ROW3);
+  drawText(actionBuf, LEFT, ROW3);
   progMemStrCpy(layerButtonFunc[currentLayer][7], actionBuf);
-  drawStringAtPosition(actionBuf, CENTER, ROW3);
+  drawText(actionBuf, CENTER, ROW3);
   progMemStrCpy(layerButtonFunc[currentLayer][8], actionBuf);
-  drawStringAtPosition(actionBuf, RIGHT, ROW3);
+  drawText(actionBuf, RIGHT, ROW3);
 
   progMemStrCpy(layerButtonFunc[currentLayer][9], actionBuf);
-  drawStringAtPosition(actionBuf, LEFT, ROW4);
+  drawText(actionBuf, LEFT, ROW4);
   progMemStrCpy(layerButtonFunc[currentLayer][10], actionBuf);
-  drawStringAtPosition(actionBuf, CENTER, ROW4);
+  drawText(actionBuf, CENTER, ROW4);
   progMemStrCpy(layerButtonFunc[currentLayer][11], actionBuf);
-  drawStringAtPosition(actionBuf, RIGHT, ROW4);
+  drawText(actionBuf, RIGHT, ROW4);
+
+  // TODO dynamic way?
 }
 
 /**
-* Forces the @link ledStrip into sleeping mode
-*/
-void sleepLEDStrip() {
-  DEBUG_PRINTLN("Leds are going to sleep...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].ledOff();
-    }
+ * Print a text at a specific position on the display taking into account the text height and width.
+ */
+void drawText(const char *buf, byte xPosition, byte yPosition) {
+  // get text dimensions
+  int h = display.getFontAscent() - display.getFontDescent();
+  int w = display.getStrWidth(buf);
+
+  // get needed cursor position
+  int xVal;
+  if (xPosition == LEFT) {
+    xVal = LEFT;
+  } else if (xPosition == CENTER) {
+    xVal = CENTER - w / 2;;
+  } else if (xPosition == RIGHT) {
+    xVal = RIGHT - w;
   }
+  display.setCursor(xVal, yPosition + h);
+
+  // draw text
+  display.print(buf);
+
+  // TODO use e.g. enom with custom values for text 'alignment'? and maybe ROWs too?
 }
 
-/**
-* Wakes the @link ledStrip from the sleeping state and enables each led with it last color value
-*/
-void wakeLEDStrip() {
-  DEBUG_PRINTLN("Waking up leds...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].ledOn();
-    }
-  }
-}
+
+// ============ LEDs =============
 
 /**
-* Sets the default color values to the leds and turns them on.
-*/
-void setLEDDefaultValues() {
+ * Tunrs all LEDs on and sets their default color according to the current layer.
+ */
+void setLedDefaultValues() {
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       keys[rowIndex][colIndex].ledDefault();
@@ -236,58 +199,65 @@ void setLEDDefaultValues() {
 }
 
 /**
-* Get the led index of the current key row and col
-* @return the led index as byte
-*/
+ * Get the led index of the specified key row and column.
+ * @return the led index as byte.
+ */
 byte getLedIndex(byte rowIdx, byte colIdx) {
-  // calculate led index out of row and col index
   byte index = rowIdx * COL_COUNT;
+  // account for S-shape of led strip
   index += rowIdx % 2 == 0 ? colIdx : COL_COUNT - 1 - colIdx;
   return index;
 }
 
-/**
-* Scans the key matrix, if a key got pressed.
-* @see keys
-* @see keyPressed
-* @see resetKey
-*/
-void readMatrix() {
-  // scan matrix
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
 
-    // is any column pulled to low due to a button being pressed?
+// ========== MATRIX =============
+
+/**
+ * Scans the key matrix to see if a key is pressed.
+ * @see keys
+ * @see keyPressed
+ * @see resetKey
+ */
+void readMatrix() {
+  // iterate throught matrix
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      // Check if the key is pressed and handle the press
+      // check if key is pressed and handle press if necessary
       keys[rowIndex][colIndex].checkPressed();
     }
   }
 }
 
 /**
-* Calls the corresponding function of the key
-* @see handleLayerKeyPress
-* @see keyOnePressed
-* @see keyTwoPressed
-* @see keyThreePressed
-* @see keyFourPressed
-* @see keyFivePressed
-* @see keySixPressed
-* @see keySevenPressed
-* @see keyEightPressed
-* @see keyNinePressed
-* @see keyTenPressed
-* @see keyElevenPressed
-* @see keyTwelvePressed
-*/
-void handleKeyPress(Key *key) {  //pass this fnct to key
-  lastKeyPressed = millis();
-  wakeComponents();
+ * Key-pressed event handler passed to key objects.
+ * Calls the corresponding handler function of the pressed key.
+ * @see handleLayerKeyPress
+ * @see keyOnePressed
+ * @see keyTwoPressed
+ * @see keyThreePressed
+ * @see keyFourPressed
+ * @see keyFivePressed
+ * @see keySixPressed
+ * @see keySevenPressed
+ * @see keyEightPressed
+ * @see keyNinePressed
+ * @see keyTenPressed
+ * @see keyElevenPressed
+ * @see keyTwelvePressed
+ */
+void handleKeyPress(Key *key) {
+  lastKeyPress = millis();
+  wake();
+
   switch (key->getIndex()) {
-    case LAYER_BACK_KEY:
-    case LAYER_HOME_KEY:
     case LAYER_FORWARD_KEY:
-      handleLayerKeyPress(key);
+      keyUpPressed(key);
+      break;
+    case LAYER_HOME_KEY:
+      keyHomePressed(key);
+      break;
+    case LAYER_BACK_KEY:
+      keyDownPressed(key);
       break;
     case KEY_1:
       keyOnePressed(key);
@@ -326,25 +296,100 @@ void handleKeyPress(Key *key) {  //pass this fnct to key
       keyTwelvePressed(key);
       break;
     default:
+      DEBUG_PRINTLN(F("ERROR: Unkown key pressed"));
       break;
   }
 }
 
 /**
-* Handles the layer key functionalities and refreshed the @link display texts and @link ledStrip colors. (Layer: up, down, home)
-*/
-void handleLayerKeyPress(Key *key) {
-  switch (key->getIndex()) {
-    case LAYER_BACK_KEY:
-      currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
-      break;
-    case LAYER_FORWARD_KEY:
-      currentLayer = (currentLayer + 1) % MAX_LAYER;
-      break;
-    case LAYER_HOME_KEY:
-    default:
-      currentLayer = HOME_LAYER;
-  }
+ * Handles the layer up key action.
+ */
+void keyUpPressed(Key *key) {
+  currentLayer = (currentLayer + 1) % MAX_LAYER;
   refreshDisplay();
-  setLEDDefaultValues();
+  setLedDefaultValues();
+}
+
+/**
+ * Handles the layer down key action.
+ */
+void keyDownPressed(Key *key) {
+  currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
+  refreshDisplay();
+  setLedDefaultValues();
+}
+
+/**
+ * Handles the home key action.
+ */
+void keyHomePressed(Key *key) {
+  currentLayer = HOME_LAYER;
+  refreshDisplay();
+  setLedDefaultValues();
+}
+
+
+// =========== SLEEP =============
+
+/**
+ * Sets components to sleep if @link sleeping is not already true.
+ */
+void sleep() {
+  if (!sleeping) {
+    sleeping = true;
+    sleepDisplay();
+    sleepLEDStrip();
+  }
+}
+
+/**
+ * Wakes components if @link sleeping is not already false.
+ */
+void wake() {
+  if (sleeping) {
+    sleeping = false;
+    wakeDisplay();
+    wakeLEDStrip();
+  }
+}
+
+/**
+ * Forces @link display into sleep.
+ */
+void sleepDisplay() {
+  DEBUG_PRINTLN(F("Display going to sleep..."));
+  display.sleepOn();
+}
+
+/**
+ * Wakes @link display from sleep.
+ */
+void wakeDisplay() {
+  DEBUG_PRINTLN(F("Display waking up..."));
+  display.sleepOff();
+  refreshDisplay();
+}
+
+/**
+ * Forces @link ledStrip into sleep.
+ */
+void sleepLEDStrip() {
+  DEBUG_PRINTLN("LEDs going to sleep...");
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].ledOff();
+    }
+  }
+}
+
+/**
+ * Wakes @link ledStrip from sleep and sets each led with its last color.
+ */
+void wakeLEDStrip() {
+  DEBUG_PRINTLN("LEDs waking up...");
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].ledOn();
+    }
+  }
 }
