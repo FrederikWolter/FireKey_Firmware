@@ -359,11 +359,8 @@ void wakeDisplay() {
  */
 void sleepLEDStrip() {
   DEBUG_PRINTLN("LEDs going to sleep...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
-      keys[rowIndex][colIndex].setLedOff();
-    }
-  }
+  ledStrip.clear();
+  ledStrip.show();
 }
 
 /**
@@ -371,6 +368,9 @@ void sleepLEDStrip() {
  */
 void wakeLEDStrip() {
   DEBUG_PRINTLN("LEDs waking up...");
-  ledStrip.clear();
-  ledStrip.show();
+  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+      keys[rowIndex][colIndex].setLedOn();
+    }
+  }
 }
