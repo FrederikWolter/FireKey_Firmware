@@ -2,7 +2,7 @@
 * FIREKEY-PROJECT
 * 
 * CONFIG.h
-* TODO Comment
+* File defining the most important configoration data.
 *************************************************************************/
 
 
