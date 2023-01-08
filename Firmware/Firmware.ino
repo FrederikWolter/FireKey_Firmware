@@ -44,8 +44,8 @@ void setup() {
   DEBUG_PRINTLN("Startup with DEBUG enabled");
 
   // disable onboard RX/TX LEDs
-  pinMode(LED_BUILTIN_TX,INPUT);
-  pinMode(LED_BUILTIN_RX,INPUT);
+  pinMode(LED_BUILTIN_TX, INPUT);
+  pinMode(LED_BUILTIN_RX, INPUT);
   DEBUG_PRINTLN("RX/TX LEDs disabled");
 
   // initialize display
@@ -119,7 +119,7 @@ void refreshDisplay() {
  */
 void setDisplayText() {
   // set layer text
-  char layerBuf[MAX_LAYER_LENGTH + 1];   // buffer to read layer name to
+  char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
   drawText(layerBuf, CENTER, ROW0);
 
@@ -129,7 +129,7 @@ void setDisplayText() {
   display.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
 
   // set key texts
-  char actionBuf[MAX_KEY_LENGTH + 1];   // buffer to read key name to
+  char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
   getProgMemStr(layerButtonFunc[currentLayer][0], actionBuf);
   drawText(actionBuf, LEFT, ROW1);
   getProgMemStr(layerButtonFunc[currentLayer][1], actionBuf);
@@ -174,7 +174,7 @@ void drawText(const char *buf, byte xPosition, byte yPosition) {
   if (xPosition == LEFT) {
     xVal = LEFT;
   } else if (xPosition == CENTER) {
-    xVal = CENTER - w / 2;;
+    xVal = CENTER - w / 2;
   } else if (xPosition == RIGHT) {
     xVal = RIGHT - w;
   }

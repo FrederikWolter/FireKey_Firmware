@@ -24,7 +24,7 @@ private:
 public:
   Key();
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key *));
-  
+
   bool getState();
   // TODO state always HIGH in handler???
   // TODO purpose of state?
@@ -44,7 +44,7 @@ public:
 /**
  * Empty constructor (required for array definition).
  */
-Key::Key() { }
+Key::Key() {}
 
 /**
  * Main constructor
@@ -106,19 +106,19 @@ void Key::check() {
   if (this->state) {
     // key was not pressed before
     if (this->downCounter == 0) {
-      (*this->keyPressedHandler)(this);   // call handler function
+      (*this->keyPressedHandler)(this);  // call handler function
     }
     // key held
     else if (!this->spamMode && this->downCounter > HOLD_DELAY) {
-      (*this->keyPressedHandler)(this);   // call handler function
-      this->spamMode = true;  // enter spam mode
-      this->downCounter = 0;  // reset counter
+      (*this->keyPressedHandler)(this);  // call handler function
+      this->spamMode = true;             // enter spam mode
+      this->downCounter = 0;             // reset counter
     }
     // key held in spam mode
     else if (this->spamMode && this->downCounter > SPAM_DELAY) {
-      (*this->keyPressedHandler)(this);   // call handler function
-      this->downCounter = 0;  // reset counter
-    } 
+      (*this->keyPressedHandler)(this);  // call handler function
+      this->downCounter = 0;             // reset counter
+    }
     this->downCounter++;
 
   // key not pressed, but was pressed before
@@ -136,7 +136,7 @@ void Key::check() {
  */
 void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
   // TODO problem with lastColor?
-  
+
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }

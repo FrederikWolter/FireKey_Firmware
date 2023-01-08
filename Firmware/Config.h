@@ -27,8 +27,8 @@
 
 // Keys (led index - see schematic)
 #define KEY_LAYER_UP 0
-#define KEY_LAYER_HOME 9  
-#define KEY_LAYER_DOWN 10          
+#define KEY_LAYER_HOME 9
+#define KEY_LAYER_DOWN 10
 #define KEY_1 4
 #define KEY_2 3
 #define KEY_3 2
