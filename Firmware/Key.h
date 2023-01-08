@@ -2,7 +2,7 @@
 * FIREKEY-PROJECT
 * 
 * KEY.h
-* TODO Comment
+* File defining Key class.
 *********************************************************************/
 
 /**
@@ -12,9 +12,9 @@ class Key {
 private:
   byte rowPin;                      // pin of row key belongs to 
   byte colPin;                      // pin of column key belongs to
-  bool state;                       // TODO 
+  bool state;                       // inverted with single press (e.g. for toggling) 
   byte ledIndex;                    // index of corresponding led
-  byte downCounter;                 // how long is key pressed - used for hold and spam delays
+  byte downCounter;                 // how long is key pressed - for hold and spam delays
   bool spamMode;                    // key is in spam mode or not
   byte lastColor[3];                // stores last rgb values of led
 
@@ -26,10 +26,9 @@ public:
   Key(byte row, byte col, byte ledIndex, Adafruit_NeoPixel *ledStrip, void (*keyPressedHandler)(Key *));
 
   bool getState();
-  // TODO state always HIGH in handler???
-  // TODO purpose of state?
   byte getIndex();
   void check();
+  void setState(bool state);
   void setLedRGB(byte idx, byte red, byte green, byte blue);
   void setLedRGB(byte red, byte green, byte blue);
   void setLedRGB(String hexCode);
@@ -96,17 +95,18 @@ void Key::check() {
   digitalWrite(this->rowPin, LOW);
 
   // read key pressed
-  this->state = (digitalRead(this->colPin) == LOW);
+  bool pressed = (digitalRead(this->colPin) == LOW);
 
   // pull output row to high
   digitalWrite(this->rowPin, HIGH);
 
   // handle result
   // key pressed
-  if (this->state) {
+  if (pressed) {
     // key was not pressed before
     if (this->downCounter == 0) {
       (*this->keyPressedHandler)(this);  // call handler function
+      this->state = !this->state;        // invert state
     }
     // key held
     else if (!this->spamMode && this->downCounter > HOLD_DELAY) {
@@ -129,13 +129,20 @@ void Key::check() {
 }
 
 
-// ============= LED =============
+// =========== SETTER ============
+
+/**
+ * Sets the key state for more advanced states.
+ */
+void Key::setState(bool state) {
+  this->state = state;
+}
 
 /**
  * Sets the led color for a specific led index.
  */
 void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
-  // TODO problem with lastColor?
+  // TODO potential problem with lastColor?
 
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
@@ -160,7 +167,7 @@ void Key::setLedRGB(String hexCode) {
   hexToRGB(hexCode, red, green, blue);
   this->setLedRGB(red, green, blue);
 }
-// TODO necessary maybe done by configurator software?
+// TODO necessary? maybe done by configurator software?
 
 /**
  * Turns LED on with last RGB value.

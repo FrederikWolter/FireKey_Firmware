@@ -45,7 +45,7 @@
 // LED strip
 #define LED_COUNT 15          // number of LEDs in the strip
 #define LED_PIN 21            // pin connected to DIN of LED strip (A3)
-#define LED_BRIGHT 128        // brightness 0-255 (brightness = (percentage / 100) * 255)
+#define LED_BRIGHT 64         // brightness 0-255 (brightness = (percentage / 100) * 255)
 
 // Display
 #define OLED2_SDA_PIN 2       // SDA pin for OLED 2 (hardware I2C)
