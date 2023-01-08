@@ -24,9 +24,9 @@
 
 
 // ========== VARIABLES ==========
-unsigned long lastRefresh;      // last checked matrix (for debouncing)
-unsigned long lastKeyPress;     // last time a key pressed (for timeout functionality)
-bool sleeping;                  // is display & led strip sleeping?
+unsigned long lastRefresh;   // last checked matrix (for debouncing)
+unsigned long lastKeyPress;  // last time a key pressed (for timeout functionality)
+bool sleeping;               // is display & led strip sleeping?
 
 // LED strip object
 Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -51,9 +51,9 @@ void setup() {
   DEBUG_PRINTLN("RX/TX LEDs disabled");
 
   // initialize display
-  oled1.setFont(u8g2_font_6x10_tr);
+  oled1.setFont(u8g2_font_7x14_tr);
   oled1.begin();
-  oled2.setFont(u8g2_font_6x10_tr);
+  oled2.setFont(u8g2_font_7x14_tr);
   oled2.begin();
   DEBUG_PRINTLN("Displays initialized");
 
@@ -102,96 +102,83 @@ void loop() {
 // ========== DISPLAY ============
 
 /**
- * Updates display using @link setDisplayText, if @link sleeping is false.
+ * Updates display using @link setDisplayText1 & @link setDisplayText2, if @link sleeping is false.
  */
 void refreshDisplay() {
   if (!sleeping) {
     oled1.firstPage();  // way of reducing RAM usage
     do {
-      oled1.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+      setDisplayText1();
     } while (oled1.nextPage());
-    
+
     oled2.firstPage();  // way of reducing RAM usage
     do {
-      setDisplayText();
+      setDisplayText2();
     } while (oled2.nextPage());
   }
 }
 
 /**
- * Writes texts of corresponding layer on the display.
+ * Writes texts of corresponding layer on the display first oled display.
  * @see drawText
  * @see refreshDisplay
  * @see currentLayer
  * @see layerNames
  * @see layerButtonFunc
  */
-void setDisplayText() {
+void setDisplayText1() {
   // set layer text
   char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
-  drawText(layerBuf, CENTER, ROW0);
+  drawText(layerBuf, CENTER, 0, &oled1);
 
   // set lines
-  oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
-  oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
-  oled2.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
+  oled1.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+  oled1.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
 
   // set key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  getProgMemStr(layerButtonFunc[currentLayer][0], actionBuf);
-  drawText(actionBuf, LEFT, ROW1);
-  getProgMemStr(layerButtonFunc[currentLayer][1], actionBuf);
-  drawText(actionBuf, CENTER, ROW1);
-  getProgMemStr(layerButtonFunc[currentLayer][2], actionBuf);
-  drawText(actionBuf, RIGHT, ROW1);
+  for (int i = 0; i < 6; i++) {
+    int row = i / 2;
+    int col = i % 2;
+    getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
+    drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
+  }
+}
 
-  getProgMemStr(layerButtonFunc[currentLayer][3], actionBuf);
-  drawText(actionBuf, LEFT, ROW2);
-  getProgMemStr(layerButtonFunc[currentLayer][4], actionBuf);
-  drawText(actionBuf, CENTER, ROW2);
-  getProgMemStr(layerButtonFunc[currentLayer][5], actionBuf);
-  drawText(actionBuf, RIGHT, ROW2);
+/**
+ * Writes texts of corresponding layer on the display second oled display.
+ * @see drawText
+ * @see refreshDisplay
+ * @see currentLayer
+ * @see layerNames
+ * @see layerButtonFunc
+ */
+void setDisplayText2() {
+  // set lines
+  oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+  oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
 
-  getProgMemStr(layerButtonFunc[currentLayer][6], actionBuf);
-  drawText(actionBuf, LEFT, ROW3);
-  getProgMemStr(layerButtonFunc[currentLayer][7], actionBuf);
-  drawText(actionBuf, CENTER, ROW3);
-  getProgMemStr(layerButtonFunc[currentLayer][8], actionBuf);
-  drawText(actionBuf, RIGHT, ROW3);
-
-  getProgMemStr(layerButtonFunc[currentLayer][9], actionBuf);
-  drawText(actionBuf, LEFT, ROW4);
-  getProgMemStr(layerButtonFunc[currentLayer][10], actionBuf);
-  drawText(actionBuf, CENTER, ROW4);
-  getProgMemStr(layerButtonFunc[currentLayer][11], actionBuf);
-  drawText(actionBuf, RIGHT, ROW4);
-
-  // TODO dynamic way?
+  char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
+  for (int i = 0; i < 6; i++) {
+    int row = i / 2;
+    int col = i % 2;
+    getProgMemStr(layerButtonFunc[currentLayer][i + 6], actionBuf);
+    drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
+  }
 }
 
 /**
  * Print a text at a specific position on the display taking into account the text height and width.
  */
-void drawText(const char *buf, byte xPosition, byte yPosition) {
+void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   // get text dimensions
-  int h = oled2.getFontAscent() - oled2.getFontDescent();
-  int w = oled2.getStrWidth(buf);
-
-  // get needed cursor position
-  int xVal;
-  if (xPosition == LEFT) {
-    xVal = LEFT;
-  } else if (xPosition == CENTER) {
-    xVal = CENTER - w / 2;
-  } else if (xPosition == RIGHT) {
-    xVal = RIGHT - w;
-  }
-  oled2.setCursor(xVal, yPosition + h);
+  int h = oled->getFontAscent() - oled->getFontDescent();
+  int w = oled->getStrWidth(buf);
+  oled->setCursor(xPosition - w / 2, yPosition + h);
 
   // draw text
-  oled2.print(buf);
-
+  oled->print(buf);
   // TODO use e.g. enum with custom values for text 'alignment'? and maybe ROWs too?
 }
 
@@ -263,7 +250,7 @@ void handleKeyPress(Key *key) {
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
-      refreshDisplay();   // TODO performance -> order change?
+      refreshDisplay();  // TODO performance -> order change?
       setLedDefaultValues();
       break;
     case KEY_LAYER_HOME:
