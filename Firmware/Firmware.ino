@@ -263,7 +263,7 @@ void handleKeyPress(Key *key) {
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
-      refreshDisplay();
+      refreshDisplay();   // TODO performance -> order change?
       setLedDefaultValues();
       break;
     case KEY_LAYER_HOME:
