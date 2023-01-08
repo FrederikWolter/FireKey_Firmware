@@ -1,10 +1,10 @@
 /*************************************************************************
 * FIREKEY-PROJECT
 * 
-* TODO
+* CONFIG.h
+* TODO Comment
 *************************************************************************/
 
-// TODO unused defs?
 
 // ========= DEFINITIONS =========
 
@@ -73,7 +73,7 @@
 const byte rows[ROW_COUNT] = { 10, 16, 14 };    // row pins - row0, row1, ...
 const byte cols[COL_COUNT] = { 9, 8, 7, 6, 5 }; // column pins - col0, col1, ...
 
-byte currentLayer = 0;        // current selected layer
+byte currentLayer = HOME_LAYER;   // current selected layer
 
 // display-names of layers
 const char layerNames[MAX_LAYER][MAX_LAYER_LENGTH] PROGMEM = {

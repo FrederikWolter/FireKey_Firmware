@@ -1,7 +1,9 @@
 /*************************************************************************
 * FIREKEY-PROJECT
 * 
-* TODO
+* DEBUG.h
+* File defining preprocessor macros used for an efficient implementation
+* of a debug mode.
 *************************************************************************/
 
 #ifndef DEBUG_H

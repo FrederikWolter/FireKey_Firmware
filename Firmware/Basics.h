@@ -1,6 +1,7 @@
 /*************************************************************************
 * FIREKEY-PROJECT
 * 
+* BASICS.h
 * TODO comment
 *************************************************************************/
 
@@ -34,7 +35,7 @@ void hexToRGB(String hexCode, int& r, int& g, int& b) {
     b = strtol(hexCodeB.c_str(), NULL, 16);
   }
 }
-// TODO check if needed here or in configurator software?
+// TODO check if conversion needed here or in configurator software?
 
 /**
  * Copies a string from the program memory into the destination.

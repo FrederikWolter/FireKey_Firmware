@@ -14,7 +14,6 @@
 // TODO more DEBUG_PRINTLN(F("xxx"));
 // TODO header split (.h & .cpp)
 // TODO change USB Device information? (Nice to have)
-// TODO Disable Onboard LEDs
 // TODO fading LEDs?
 
 
@@ -44,6 +43,11 @@ void setup() {
   // initialize serial print if debug
   DEBUG_BEGIN();
   DEBUG_PRINTLN("Startup with DEBUG enabled");
+
+  // disable onboard RX/TX LEDs
+  pinMode(LED_BUILTIN_TX,INPUT);
+  pinMode(LED_BUILTIN_RX,INPUT);
+  DEBUG_PRINTLN("RX/TX LEDs disabled");
 
   // initialize display
   display.setFont(u8g2_font_6x10_tr);
