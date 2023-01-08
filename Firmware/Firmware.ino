@@ -129,7 +129,7 @@ void refreshDisplay() {
  * @see layerButtonFunc
  */
 void setDisplayText1() {
-  oled1.clearBuffer();	
+  oled1.clearBuffer();
   // set layer text
   char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
@@ -147,7 +147,7 @@ void setDisplayText1() {
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
-  oled1.sendBuffer();	
+  oled1.sendBuffer();
 }
 
 /**
@@ -159,7 +159,7 @@ void setDisplayText1() {
  * @see layerButtonFunc
  */
 void setDisplayText2() {
-  oled2.clearBuffer();	
+  oled2.clearBuffer();
   // set lines
   oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
   oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
@@ -171,7 +171,7 @@ void setDisplayText2() {
     getProgMemStr(layerButtonFunc[currentLayer][i + 6], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
-  oled2.sendBuffer();	
+  oled2.sendBuffer();
 }
 
 /**
@@ -343,6 +343,7 @@ void wake() {
  */
 void sleepDisplay() {
   DEBUG_PRINTLN("Display going to sleep...");
+  oled1.sleepOn();
   oled2.sleepOn();
 }
 
@@ -351,6 +352,7 @@ void sleepDisplay() {
  */
 void wakeDisplay() {
   DEBUG_PRINTLN("Display waking up...");
+  oled1.sleepOff();
   oled2.sleepOff();
   refreshDisplay();
 }
