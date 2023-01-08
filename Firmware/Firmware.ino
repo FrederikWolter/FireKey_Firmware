@@ -16,6 +16,8 @@
 // TODO change USB Device information? (Nice to have)
 // TODO fading LEDs?
 
+// TODO integrate oled1 into code
+
 
 // ===== LIBRARIES & CONFIG ======
 #include "Config.h"
@@ -33,8 +35,8 @@ Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED objects
-U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
-// TODO add second display (software i2c)
+U8G2_SH1106_128X64_NONAME_1_SW_I2C oled1(U8G2_R0, OLED1_SCL_PIN, OLED1_SDA_PIN, U8X8_PIN_NONE);
+U8G2_SH1106_128X64_NONAME_1_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
 
 
 // ============ SETUP ============
@@ -49,9 +51,11 @@ void setup() {
   DEBUG_PRINTLN("RX/TX LEDs disabled");
 
   // initialize display
-  display.setFont(u8g2_font_6x10_tr);
-  display.begin();
-  DEBUG_PRINTLN("Display initialized");
+  oled1.setFont(u8g2_font_6x10_tr);
+  oled1.begin();
+  oled2.setFont(u8g2_font_6x10_tr);
+  oled2.begin();
+  DEBUG_PRINTLN("Displays initialized");
 
   // initialize LED strip
   ledStrip.begin();
@@ -102,10 +106,15 @@ void loop() {
  */
 void refreshDisplay() {
   if (!sleeping) {
-    display.firstPage();  // way of reducing RAM usage
+    oled1.firstPage();  // way of reducing RAM usage
+    do {
+      oled1.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+    } while (oled1.nextPage());
+    
+    oled2.firstPage();  // way of reducing RAM usage
     do {
       setDisplayText();
-    } while (display.nextPage());
+    } while (oled2.nextPage());
   }
 }
 
@@ -124,9 +133,9 @@ void setDisplayText() {
   drawText(layerBuf, CENTER, ROW0);
 
   // set lines
-  display.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
-  display.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
-  display.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
+  oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
+  oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
+  oled2.drawLine(VLINE2, TOP, VLINE2, BOTTOM);
 
   // set key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
@@ -166,8 +175,8 @@ void setDisplayText() {
  */
 void drawText(const char *buf, byte xPosition, byte yPosition) {
   // get text dimensions
-  int h = display.getFontAscent() - display.getFontDescent();
-  int w = display.getStrWidth(buf);
+  int h = oled2.getFontAscent() - oled2.getFontDescent();
+  int w = oled2.getStrWidth(buf);
 
   // get needed cursor position
   int xVal;
@@ -178,10 +187,10 @@ void drawText(const char *buf, byte xPosition, byte yPosition) {
   } else if (xPosition == RIGHT) {
     xVal = RIGHT - w;
   }
-  display.setCursor(xVal, yPosition + h);
+  oled2.setCursor(xVal, yPosition + h);
 
   // draw text
-  display.print(buf);
+  oled2.print(buf);
 
   // TODO use e.g. enum with custom values for text 'alignment'? and maybe ROWs too?
 }
@@ -341,7 +350,7 @@ void wake() {
  */
 void sleepDisplay() {
   DEBUG_PRINTLN("Display going to sleep...");
-  display.sleepOn();
+  oled2.sleepOn();
 }
 
 /**
@@ -349,7 +358,7 @@ void sleepDisplay() {
  */
 void wakeDisplay() {
   DEBUG_PRINTLN("Display waking up...");
-  display.sleepOff();
+  oled2.sleepOff();
   refreshDisplay();
 }
 
