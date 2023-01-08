@@ -35,8 +35,8 @@ Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED objects
-U8G2_SH1106_128X64_NONAME_1_SW_I2C oled1(U8G2_R0, OLED1_SCL_PIN, OLED1_SDA_PIN, U8X8_PIN_NONE);
-U8G2_SH1106_128X64_NONAME_1_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
+U8G2_SH1106_128X64_NONAME_F_SW_I2C oled1(U8G2_R0, OLED1_SCL_PIN, OLED1_SDA_PIN, U8X8_PIN_NONE);
+U8G2_SH1106_128X64_NONAME_F_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
 
 
 // ============ SETUP ============
@@ -84,7 +84,7 @@ void setup() {
 
 // ============ LOOP =============
 void loop() {
-  // DEBUG_PRINTLN(freeMemory()); // TODO remove?
+  //Serial.println(freeMemory()); // TODO remove?
 
   // check if debounce time is over
   if ((millis() - lastRefresh) > DEBOUNCE_DELAY) {
@@ -106,7 +106,7 @@ void loop() {
  */
 void refreshDisplay() {
   if (!sleeping) {
-    oled1.firstPage();  // way of reducing RAM usage
+    /*oled1.firstPage();  // way of reducing RAM usage
     do {
       setDisplayText1();
     } while (oled1.nextPage());
@@ -114,7 +114,9 @@ void refreshDisplay() {
     oled2.firstPage();  // way of reducing RAM usage
     do {
       setDisplayText2();
-    } while (oled2.nextPage());
+    } while (oled2.nextPage());*/
+    setDisplayText1();
+    setDisplayText2();
   }
 }
 
@@ -127,6 +129,7 @@ void refreshDisplay() {
  * @see layerButtonFunc
  */
 void setDisplayText1() {
+  oled1.clearBuffer();	
   // set layer text
   char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
@@ -144,6 +147,7 @@ void setDisplayText1() {
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
+  oled1.sendBuffer();	
 }
 
 /**
@@ -155,6 +159,7 @@ void setDisplayText1() {
  * @see layerButtonFunc
  */
 void setDisplayText2() {
+  oled2.clearBuffer();	
   // set lines
   oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
   oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
@@ -166,6 +171,7 @@ void setDisplayText2() {
     getProgMemStr(layerButtonFunc[currentLayer][i + 6], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
+  oled2.sendBuffer();	
 }
 
 /**
@@ -175,10 +181,10 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   // get text dimensions
   int h = oled->getFontAscent() - oled->getFontDescent();
   int w = oled->getStrWidth(buf);
-  oled->setCursor(xPosition - w / 2, yPosition + h);
+  //oled->setCursor(xPosition - w / 2, yPosition + h);
 
   // draw text
-  oled->print(buf);
+  oled->drawStr(xPosition - w / 2, yPosition + h, buf);
   // TODO use e.g. enum with custom values for text 'alignment'? and maybe ROWs too?
 }
 
