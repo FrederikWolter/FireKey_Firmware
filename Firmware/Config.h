@@ -48,6 +48,8 @@
 #define LED_BRIGHT 128        // brightness 0-255 (brightness = (percentage / 100) * 255)
 
 // Display
+#define OLED2_SDA_PIN 2       // SDA pin for OLED 2 (hardware I2C)
+#define OLED2_SCL_PIN 3       // SCL pin for OLED 2 (hardware I2C)
 #define MAX_KEY_LENGTH 5      // max length for a key name
 #define MAX_LAYER_LENGTH 10   // max length for a layer name
 

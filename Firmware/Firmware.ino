@@ -12,7 +12,7 @@
 *************************************************************************/
 
 // TODO more DEBUG_PRINTLN(F("xxx"));
-// TODO header split (.h & .cpp)
+// TODO header split (.h & .cpp)?
 // TODO change USB Device information? (Nice to have)
 // TODO fading LEDs?
 
@@ -33,8 +33,7 @@ Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Key keys[ROW_COUNT][COL_COUNT];
 
 // OLED objects
-U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, 3, 2);
-// TODO extract pint to config
+U8G2_SH1106_128X64_NONAME_1_HW_I2C display(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
 // TODO add second display (software i2c)
 
 
@@ -65,8 +64,6 @@ void setup() {
     for (byte c = 0; c < COL_COUNT; c++)
       keys[r][c] = Key(rows[r], cols[c], getLedIndex(r, c), &ledStrip, &handleKeyPress);
   DEBUG_PRINTLN("Matrix initialized");
-
-  // TODO fix Key documentation?
 
   // initialize keyboard
   Keyboard.begin(KeyboardLayout_de_DE);
@@ -110,8 +107,6 @@ void refreshDisplay() {
       setDisplayText();
     } while (display.nextPage());
   }
-
-  // TODO make sure this is efficient?
 }
 
 /**

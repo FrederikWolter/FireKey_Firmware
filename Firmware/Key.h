@@ -5,6 +5,9 @@
 * TODO Comment
 *********************************************************************/
 
+/**
+ * Key class representing a key on the board and its corresponding LED.
+ */
 class Key {
 private:
   byte rowPin;                      // pin of row key belongs to 
