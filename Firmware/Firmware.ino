@@ -21,8 +21,6 @@
 // TODO change USB Device information? (Nice to have)
 // TODO fading LEDs?
 
-// TODO integrate oled1 into code
-
 
 // ===== LIBRARIES & CONFIG ======
 #include "Config.h"
