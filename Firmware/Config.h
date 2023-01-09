@@ -25,7 +25,7 @@
 #define MAX_LAYER 5           // number of available layers
 #define HOME_LAYER 0          // default layer after home button is pressed
 
-// Keys (led index - see schematic)
+// Keys (led index)
 #define KEY_LAYER_UP 0
 #define KEY_LAYER_HOME 9
 #define KEY_LAYER_DOWN 10
@@ -54,10 +54,10 @@
 #define OLED2_SCL_PIN 3       // SCL pin for OLED 2 (hardware I2C)
 #define MAX_KEY_LENGTH 8      // max length for a key name
 #define MAX_LAYER_LENGTH 10   // max length for a layer name
-#define NUM_OF_COLS 2         // number of columns on the display
-#define NUBMER_OF_OLED_KEYS 6 // number of keys on one display
+#define OLED_COL_COUNT 2      // number of key columns per display
+#define OLED_KEY_COUNT 6      // number of keys per display
 
-// Positions on the display
+// Positions on the display (in px)
 #define LEFT 0                // text alignment left & start of horizontal line
 #define CENTER 64             // text alignment center
 #define RIGHT 127             // text alignment right & end of horizontal line
@@ -86,45 +86,54 @@ const char layerNames[MAX_LAYER][MAX_LAYER_LENGTH + 1] PROGMEM = {
   "Layer5",
 };
 
-// TODO change this with new layout
 // display-names of keys for each layer (uses key index)
 const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH + 1] PROGMEM = {
-  { "D0L0L1", "D0L0R1",  // name: Display 0 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
-    "D0L0L2", "D0L0R2",
+  {
+    "D0L0L1", "D0L0R1",   // name: Display 0 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
+    "D0L0L2", "D0L0R2",   // ...
     "D0L0L3", "D0L0R3",
-    "D1L0L1", "D1L0R1",  // name: Display 1 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
-    "D1L0L2", "D1L0R2",
-    "D1L0L3", "D1L0R3" },
-  { "D0L1L1", "D0L1R1",
+    "D1L0L1", "D1L0R1",   // name: Display 1 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
+    "D1L0L2", "D1L0R2",   // ...
+    "D1L0L3", "D1L0R3" 
+  },
+  { 
+    "D0L1L1", "D0L1R1",
     "D0L1L2", "D0L1R2",
     "D0L1L3", "D0L1R3",
     "D1L1L1", "D1L1R1",
     "D1L1L2", "D1L1R2",
-    "D1L1L3", "D1L1R3" },
-  { "D0L2L1", "D0L2R1",
+    "D1L1L3", "D1L1R3" 
+  },
+  { 
+    "D0L2L1", "D0L2R1",
     "D0L2L2", "D0L2R2",
     "D0L2L3", "D0L2R3",
     "D1L2L1", "D1L2R1",
     "D1L2L2", "D1L2R2",
-    "D1L2L3", "D1L2R3" },
-  { "D0L3L1", "D0L3R1",
+    "D1L2L3", "D1L2R3" 
+  },
+  { 
+    "D0L3L1", "D0L3R1",
     "D0L3L2", "D0L3R2",
     "D0L3L3", "D0L3R3",
     "D1L3L1", "D1L3R1",
     "D1L3L2", "D1L3R2",
-    "D1L3L3", "D1L3R3" },
-  { "D0L4L1", "D0L4R1",
+    "D1L3L3", "D1L3R3" 
+  },
+  { 
+    "D0L4L1", "D0L4R1",
     "D0L4L2", "D0L4R2",
     "D0L4L3", "D0L4R3",
     "D1L4L1", "D1L4R1",
     "D1L4L2", "D1L4R2",
-    "D1L4L3", "D1L4R3" },
+    "D1L4L3", "D1L4R3" 
+  },
 };
 
 // led rgb colors for each layer and key (led index)
 const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
   {
-    { 0, 0, 0 },  //red, green, blue
+    { 0, 0, 0 },  // red, green, blue
     { 0, 0, 1 },
     { 0, 0, 2 },
     { 0, 0, 3 },
@@ -222,6 +231,9 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
 
 #include "Debug.h"
 #include "Key.h"
+
+
+// ========= KEY ACTIONS =========
 
 /**
  * Handles the key 1 actions for each layer.

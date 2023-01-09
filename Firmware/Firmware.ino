@@ -20,7 +20,6 @@
 
 // TODO header split (.h & .cpp)? [nice to have]
 // TODO change USB Device information? [Nice to have]
-// TODO fading LEDs? [Nice to have]
 
 
 // ===== LIBRARIES & CONFIG ======
@@ -139,9 +138,9 @@ void setTextDisplay1() {
 
   // draw key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (byte i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
-    byte row = i / NUM_OF_COLS;
-    byte col = i % NUM_OF_COLS;
+  for (byte i = 0; i < OLED_KEY_COUNT; i++) {
+    byte row = i / OLED_COL_COUNT;
+    byte col = i % OLED_COL_COUNT;
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
@@ -167,10 +166,10 @@ void setTextDisplay2() {
 
   // draw key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (byte i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
-    byte row = i / NUM_OF_COLS;
-    byte col = i % NUM_OF_COLS;
-    getProgMemStr(layerButtonFunc[currentLayer][i + NUBMER_OF_OLED_KEYS], actionBuf);
+  for (byte i = 0; i < OLED_KEY_COUNT; i++) {
+    byte row = i / OLED_COL_COUNT;
+    byte col = i % OLED_COL_COUNT;
+    getProgMemStr(layerButtonFunc[currentLayer][i + OLED_KEY_COUNT], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
 
