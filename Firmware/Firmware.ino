@@ -111,15 +111,6 @@ void loop() {
  */
 void refreshDisplay() {
   if (!sleeping) {
-    /*oled1.firstPage();  // way of reducing RAM usage
-    do {
-      setDisplayText1();
-    } while (oled1.nextPage());
-
-    oled2.firstPage();  // way of reducing RAM usage
-    do {
-      setDisplayText2();
-    } while (oled2.nextPage());*/
     setDisplayText1();
     setDisplayText2();
   }
@@ -146,9 +137,9 @@ void setDisplayText1() {
 
   // set key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (int i = 0; i < 6; i++) {
-    int row = i / 2;
-    int col = i % 2;
+  for (int i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
+    int row = i / NUM_OF_COLS;
+    int col = i % NUM_OF_COLS;
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
@@ -170,10 +161,10 @@ void setDisplayText2() {
   oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
 
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (int i = 0; i < 6; i++) {
-    int row = i / 2;
-    int col = i % 2;
-    getProgMemStr(layerButtonFunc[currentLayer][i + 6], actionBuf);
+  for (int i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
+    int row = i / NUM_OF_COLS;
+    int col = i % NUM_OF_COLS;
+    getProgMemStr(layerButtonFunc[currentLayer][i + NUBMER_OF_OLED_KEYS], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
   oled2.sendBuffer();
@@ -186,11 +177,9 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   // get text dimensions
   int h = oled->getFontAscent() - oled->getFontDescent();
   int w = oled->getStrWidth(buf);
-  //oled->setCursor(xPosition - w / 2, yPosition + h);
 
   // draw text
   oled->drawStr(xPosition - w / 2, yPosition + h, buf);
-  // TODO use e.g. enum with custom values for text 'alignment'? and maybe ROWs too?
 }
 
 

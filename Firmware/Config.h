@@ -54,6 +54,8 @@
 #define OLED2_SCL_PIN 3       // SCL pin for OLED 2 (hardware I2C)
 #define MAX_KEY_LENGTH 8      // max length for a key name
 #define MAX_LAYER_LENGTH 10   // max length for a layer name
+#define NUM_OF_COLS 2         // number of columns on the display
+#define NUBMER_OF_OLED_KEYS 6 // number of keys on one display
 
 // Positions on the display
 #define LEFT 0                // text alignment left & start of horizontal line
