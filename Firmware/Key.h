@@ -15,8 +15,8 @@ private:
   bool state;                       // inverted with single press (e.g. for toggling) 
   byte ledIndex;                    // index of corresponding led
   byte downCounter;                 // how long is key pressed - for hold and spam delays
-  bool spamMode;                    // key is in spam mode or not
-  byte lastColor[3];                // stores last rgb values of led
+  bool spamMode;                    // is key in spam mode
+  byte lastColor[3];                // last rgb value of led
 
   Adafruit_NeoPixel *ledStrip;      // pointer to global led-strip object
   void (*keyPressedHandler)(Key *); // handler function called if key gets pressed
@@ -142,7 +142,6 @@ void Key::setState(bool state) {
  */
 void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
   // TODO potential problem with lastColor?
-
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }
