@@ -389,3 +389,20 @@ void wakeLEDStrip() {
     for (byte colIndex = 0; colIndex < COL_COUNT; colIndex++)
       keys[rowIndex][colIndex].setLedOn();
 }
+
+
+// ======== PROGMEM ==============
+
+/**
+ * Copies a string from the program memory into the destination.
+ * Reduced RAM usage.
+ */
+void getProgMemStr(const char str[], char dest[]) {
+  char c;
+  byte i = 0;
+  while ((c = pgm_read_byte(str++))) {
+    dest[i] = c;
+    i++;
+  }
+  dest[i] = '\0';
+}

@@ -221,7 +221,6 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
 #include <U8g2lib.h>
 
 #include "Debug.h"
-#include "Basics.h"
 #include "Key.h"
 
 /**

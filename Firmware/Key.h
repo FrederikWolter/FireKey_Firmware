@@ -31,7 +31,6 @@ public:
   void setState(bool state);
   void setLedRGB(byte idx, byte red, byte green, byte blue);
   void setLedRGB(byte red, byte green, byte blue);
-  void setLedRGB(String hexCode);
   void setLedOn();
   void setLedOff();
   void setLedDefault();
@@ -158,16 +157,6 @@ void Key::setLedRGB(byte red, byte green, byte blue) {
 
   this->setLedRGB(this->ledIndex, red, green, blue);
 }
-
-/**
- * Sets the led color for this key using a hex code.
- */
-void Key::setLedRGB(String hexCode) {
-  int red, green, blue;
-  hexToRGB(hexCode, red, green, blue);
-  this->setLedRGB(red, green, blue);
-}
-// TODO necessary? maybe done by configurator software?
 
 /**
  * Turns LED on with last RGB value.
