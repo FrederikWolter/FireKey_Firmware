@@ -251,10 +251,14 @@ void readMatrix() {
  * @see keyElevenPressed
  * @see keyTwelvePressed
  */
-void handleKeyPress(Key *key) { // TODO wake up key press?
+void handleKeyPress(Key *key) {
   lastKeyPress = millis();
-  wake();
 
+  if(sleeping){   // if sleeping just wake up
+    wake();
+    return;
+  }
+  
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
