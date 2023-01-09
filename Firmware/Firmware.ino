@@ -109,7 +109,9 @@ void loop() {
  */
 void refreshDisplay() {
   if (!sleeping) {
+    DEBUG_PRINTLN("Refreshing display 1...");
     setDisplayText1();
+    DEBUG_PRINTLN("Refreshing display 2...");
     setDisplayText2();
   }
 }
@@ -187,6 +189,7 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
  * Turns all LEDs on and sets their default color according to the current layer.
  */
 void setLedDefaultValues() {
+  DEBUG_PRINTLN("Setting default led colors...");
   for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
     for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       keys[rowIndex][colIndex].setLedDefault();
@@ -250,52 +253,67 @@ void handleKeyPress(Key *key) {
       currentLayer = (currentLayer + 1) % MAX_LAYER;
       refreshDisplay();  // TODO performance -> order change?
       setLedDefaultValues();
+      DEBUG_PRINTLN("Layer up pressed");
       break;
     case KEY_LAYER_HOME:
       currentLayer = HOME_LAYER;
       refreshDisplay();
       setLedDefaultValues();
+      DEBUG_PRINTLN("Layer home pressed");
       break;
     case KEY_LAYER_DOWN:
       currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
       refreshDisplay();
       setLedDefaultValues();
+      DEBUG_PRINTLN("Layer down pressed");
       break;
     case KEY_1:
       keyOnePressed(key);
+      DEBUG_PRINTLN("Key one pressed");
       break;
     case KEY_2:
       keyTwoPressed(key);
+      DEBUG_PRINTLN("Key two pressed");
       break;
     case KEY_3:
       keyThreePressed(key);
+      DEBUG_PRINTLN("Key three pressed");
       break;
     case KEY_4:
       keyFourPressed(key);
+      DEBUG_PRINTLN("Key four pressed");
       break;
     case KEY_5:
       keyFivePressed(key);
+      DEBUG_PRINTLN("Key five pressed");
       break;
     case KEY_6:
       keySixPressed(key);
+      DEBUG_PRINTLN("Key six pressed");
       break;
     case KEY_7:
       keySevenPressed(key);
+      DEBUG_PRINTLN("Key seven pressed");
       break;
     case KEY_8:
       keyEightPressed(key);
+      DEBUG_PRINTLN("Key eight pressed");
       break;
     case KEY_9:
       keyNinePressed(key);
+      DEBUG_PRINTLN("Key nine pressed");
       break;
     case KEY_10:
       keyTenPressed(key);
+      DEBUG_PRINTLN("Key ten pressed");
       break;
     case KEY_11:
       keyElevenPressed(key);
+      DEBUG_PRINTLN("Key eleven pressed");
       break;
     case KEY_12:
       keyTwelvePressed(key);
+      DEBUG_PRINTLN("Key twelve pressed");
       break;
     default:
       DEBUG_PRINTLN("ERROR: Unknown key pressed");
