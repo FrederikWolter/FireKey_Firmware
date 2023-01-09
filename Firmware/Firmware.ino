@@ -1,14 +1,19 @@
 /*************************************************************************
 * FIREKEY-PROJECT
-* Firmware Version 1.0.0
+* Firmware Version 1.0.2
 * 
 * Required libs:
 * - Keyboard          (https://github.com/arduino-libraries/Keyboard) 
 * - USBHost           (https://github.com/arduino-libraries/USBHost)
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel)
+*   -> requires: Adafruit BusIO & Adafruit GFX Library
 * - U8g2              (https://github.com/olikraus/u8g2)
 * - avr/pgmspace      (part of Pro Micro Board - preinstalled)
 * -> can all be installed via Arduino IDE library manager
+*
+* Firmware is tested on a Arduino Pro Micro.
+* Required Board:
+* - Arduino AVR Boards
 *************************************************************************/
 
 // TODO more DEBUG_PRINTLN(F("xxx"));
