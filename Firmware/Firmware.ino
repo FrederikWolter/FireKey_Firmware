@@ -1,43 +1,44 @@
 /*************************************************************************
 * FIREKEY-PROJECT
-* Firmware Version 1.0.2
+* Firmware Version 1.0.3
 * 
-* Required libs:
+* Required Library:
 * - Keyboard          (https://github.com/arduino-libraries/Keyboard) 
-* - USBHost           (https://github.com/arduino-libraries/USBHost)
+*   - USBHost         (https://github.com/arduino-libraries/USBHost)
 * - Adafruit NeoPixel (https://github.com/adafruit/Adafruit_NeoPixel)
-*   -> requires: Adafruit BusIO & Adafruit GFX Library
+*   - Adafruit BusIO  (https://github.com/adafruit/Adafruit_BusIO)
+*   - Adafruit GFX    (https://github.com/adafruit/Adafruit-GFX-Library)
 * - U8g2              (https://github.com/olikraus/u8g2)
 * - avr/pgmspace      (part of Pro Micro Board - preinstalled)
-* -> can all be installed via Arduino IDE library manager
+* >> can all be installed via Arduino IDE library manager
 *
-* Firmware is tested on a Arduino Pro Micro.
 * Required Board:
 * - Arduino AVR Boards
+* 
+* This Firmware is designed to run on the FireKey hardware.
 *************************************************************************/
 
-// TODO more DEBUG_PRINTLN(F("xxx"));
-// TODO header split (.h & .cpp)?
-// TODO change USB Device information? (Nice to have)
-// TODO fading LEDs?
+// TODO header split (.h & .cpp)? [nice to have]
+// TODO change USB Device information? [Nice to have]
+// TODO fading LEDs? [Nice to have]
 
 
 // ===== LIBRARIES & CONFIG ======
 #include "Config.h"
 
 
-// ========== VARIABLES ==========
-unsigned long lastRefresh;   // last checked matrix (for debouncing)
-unsigned long lastKeyPress;  // last time a key pressed (for timeout functionality)
+// ========= VARIABLES ===========
+unsigned long lastRefresh;   // last time checked matrix (for debouncing)
+unsigned long lastKeyPress;  // last time a key was pressed (for timeout)
 bool sleeping;               // is display & led strip sleeping?
 
-// LED strip object
-Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-
-// Key objects
+// Keys
 Key keys[ROW_COUNT][COL_COUNT];
 
-// OLED objects
+// LED strip
+Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+// OLEDs
 U8G2_SH1106_128X64_NONAME_F_SW_I2C oled1(U8G2_R0, OLED1_SCL_PIN, OLED1_SDA_PIN, U8X8_PIN_NONE);
 U8G2_SH1106_128X64_NONAME_F_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
 
@@ -53,7 +54,7 @@ void setup() {
   pinMode(LED_BUILTIN_RX, INPUT);
   DEBUG_PRINTLN("RX/TX LEDs disabled");
 
-  // initialize display
+  // initialize displays
   oled1.setFont(u8g2_font_7x14_tr);
   oled1.begin();
   oled2.setFont(u8g2_font_7x14_tr);
@@ -79,7 +80,7 @@ void setup() {
   // initialize start values
   lastKeyPress = millis();
   sleeping = false;
-  refreshDisplay();
+  refreshDisplays();
   setLedDefaultValues();
   DEBUG_PRINTLN("Values initialized");
 }
@@ -105,78 +106,85 @@ void loop() {
 // ========== DISPLAY ============
 
 /**
- * Updates display using @link setDisplayText1 & @link setDisplayText2, if @link sleeping is false.
+ * Refresh displays using @link setTextDisplay1 & @link setTextDisplay2, if @link sleeping is false.
  */
-void refreshDisplay() {
+void refreshDisplays() {
   if (!sleeping) {
     DEBUG_PRINTLN("Refreshing display 1...");
-    setDisplayText1();
+    setTextDisplay1();
     DEBUG_PRINTLN("Refreshing display 2...");
-    setDisplayText2();
+    setTextDisplay2();
   }
 }
 
 /**
- * Writes texts of corresponding layer on the display first oled display.
+ * Writes texts of corresponding layer to display 1.
  * @see drawText
- * @see refreshDisplay
+ * @see refreshDisplays
  * @see currentLayer
  * @see layerNames
  * @see layerButtonFunc
  */
-void setDisplayText1() {
+void setTextDisplay1() {
   oled1.clearBuffer();
-  // set layer text
+  
+  // draw layer text
   char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
   drawText(layerBuf, CENTER, 0, &oled1);
 
-  // set lines
-  oled1.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
-  oled1.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
+  // draw lines
+  oled1.drawLine(LEFT, HLINE1, RIGHT, HLINE1);  // -----
+  oled1.drawLine(VLINE1, TOP, VLINE1, BOTTOM);  //   |
 
-  // set key texts
+  // draw key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (int i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
-    int row = i / NUM_OF_COLS;
-    int col = i % NUM_OF_COLS;
+  for (byte i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
+    byte row = i / NUM_OF_COLS;
+    byte col = i % NUM_OF_COLS;
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
+
+  // send to display
   oled1.sendBuffer();
 }
 
 /**
- * Writes texts of corresponding layer on the display second oled display.
+ * Writes texts of corresponding layer to display 2.
  * @see drawText
- * @see refreshDisplay
+ * @see refreshDisplays
  * @see currentLayer
  * @see layerNames
  * @see layerButtonFunc
  */
-void setDisplayText2() {
+void setTextDisplay2() {
   oled2.clearBuffer();
-  // set lines
-  oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);
-  oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);
 
+  // draw lines
+  oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);  // -----
+  oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);  //   |
+
+  // draw key texts
   char actionBuf[MAX_KEY_LENGTH + 1];  // buffer to read key name to
-  for (int i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
-    int row = i / NUM_OF_COLS;
-    int col = i % NUM_OF_COLS;
+  for (byte i = 0; i < NUBMER_OF_OLED_KEYS; i++) {
+    byte row = i / NUM_OF_COLS;
+    byte col = i % NUM_OF_COLS;
     getProgMemStr(layerButtonFunc[currentLayer][i + NUBMER_OF_OLED_KEYS], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
+
+  // send to display
   oled2.sendBuffer();
 }
 
 /**
- * Print a text at a specific position on the display taking into account the text height and width.
+ * Draw a text at a specific position on the display taking text height and width into account.
  */
 void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   // get text dimensions
-  int h = oled->getFontAscent() - oled->getFontDescent();
-  int w = oled->getStrWidth(buf);
+  byte h = oled->getFontAscent() - oled->getFontDescent();
+  byte w = oled->getStrWidth(buf);
 
   // draw text
   oled->drawStr(xPosition - w / 2, yPosition + h, buf);
@@ -190,11 +198,10 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
  */
 void setLedDefaultValues() {
   DEBUG_PRINTLN("Setting default led colors...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+
+  for (byte rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++)
+    for (byte colIndex = 0; colIndex < COL_COUNT; colIndex++)
       keys[rowIndex][colIndex].setLedDefault();
-    }
-  }
 }
 
 /**
@@ -203,6 +210,7 @@ void setLedDefaultValues() {
  */
 byte getLedIndex(byte rowIdx, byte colIdx) {
   byte index = rowIdx * COL_COUNT;
+  
   // account for S-shape of led strip
   index += rowIdx % 2 == 0 ? colIdx : COL_COUNT - 1 - colIdx;
   return index;
@@ -219,8 +227,8 @@ byte getLedIndex(byte rowIdx, byte colIdx) {
  */
 void readMatrix() {
   // iterate through matrix
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+  for (byte rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
+    for (byte colIndex = 0; colIndex < COL_COUNT; colIndex++) {
       // check if key is pressed and handle press if necessary
       keys[rowIndex][colIndex].check();
     }
@@ -244,26 +252,26 @@ void readMatrix() {
  * @see keyElevenPressed
  * @see keyTwelvePressed
  */
-void handleKeyPress(Key *key) {
+void handleKeyPress(Key *key) { // TODO wake up key press?
   lastKeyPress = millis();
   wake();
 
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
-      refreshDisplay();  // TODO performance -> order change?
+      refreshDisplays();  // TODO performance -> order change?
       setLedDefaultValues();
       DEBUG_PRINTLN("Layer up pressed");
       break;
     case KEY_LAYER_HOME:
       currentLayer = HOME_LAYER;
-      refreshDisplay();
+      refreshDisplays();
       setLedDefaultValues();
       DEBUG_PRINTLN("Layer home pressed");
       break;
     case KEY_LAYER_DOWN:
       currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
-      refreshDisplay();
+      refreshDisplays();
       setLedDefaultValues();
       DEBUG_PRINTLN("Layer down pressed");
       break;
@@ -327,50 +335,46 @@ void handleKeyPress(Key *key) {
 // =========== SLEEP =============
 
 /**
- * Sets components to sleep if @link sleeping is not already true.
+ * Sets components to sleep.
  */
 void sleep() {
-  if (!sleeping) {
-    sleeping = true;
-    sleepDisplay();
-    sleepLEDStrip();
-  }
+  sleeping = true;
+  sleepDisplays();
+  sleepLedStrip();
 }
 
 /**
- * Wakes components if @link sleeping is not already false.
+ * Wakes components from sleep.
  */
 void wake() {
-  if (sleeping) {
-    sleeping = false;
-    wakeDisplay();
-    wakeLEDStrip();
-  }
+  sleeping = false;
+  wakeDisplay();
+  wakeLEDStrip();
 }
 
 /**
- * Forces @link display into sleep.
+ * Forces @link displays into sleep.
  */
-void sleepDisplay() {
+void sleepDisplays() {
   DEBUG_PRINTLN("Display going to sleep...");
   oled1.sleepOn();
   oled2.sleepOn();
 }
 
 /**
- * Wakes @link display from sleep.
+ * Wakes @link displays from sleep.
  */
 void wakeDisplay() {
   DEBUG_PRINTLN("Display waking up...");
   oled1.sleepOff();
   oled2.sleepOff();
-  refreshDisplay();
+  refreshDisplays();
 }
 
 /**
  * Forces @link ledStrip into sleep.
  */
-void sleepLEDStrip() {
+void sleepLedStrip() {
   DEBUG_PRINTLN("LEDs going to sleep...");
   ledStrip.clear();
   ledStrip.show();
@@ -381,9 +385,7 @@ void sleepLEDStrip() {
  */
 void wakeLEDStrip() {
   DEBUG_PRINTLN("LEDs waking up...");
-  for (int rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++) {
-    for (int colIndex = 0; colIndex < COL_COUNT; colIndex++) {
+  for (byte rowIndex = 0; rowIndex < ROW_COUNT; rowIndex++)
+    for (byte colIndex = 0; colIndex < COL_COUNT; colIndex++)
       keys[rowIndex][colIndex].setLedOn();
-    }
-  }
 }
