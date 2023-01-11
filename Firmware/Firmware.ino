@@ -1,6 +1,6 @@
 /*************************************************************************
 * FIREKEY-PROJECT
-* Firmware Version 1.0.3
+* Firmware Version 1.1.0
 * 
 * Required Library:
 * - Keyboard          (https://github.com/arduino-libraries/Keyboard) 
@@ -38,9 +38,8 @@ Key keys[ROW_COUNT][COL_COUNT];
 Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // OLEDs
-U8G2_SH1106_128X64_NONAME_F_SW_I2C oled1(U8G2_R0, OLED1_SCL_PIN, OLED1_SDA_PIN, U8X8_PIN_NONE);
-U8G2_SH1106_128X64_NONAME_F_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED2_SCL_PIN, OLED2_SDA_PIN);
-
+U8G2_SH1106_128X64_NONAME_F_HW_I2C oled1(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
+U8G2_SH1106_128X64_NONAME_F_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
 
 // ============ SETUP ============
 void setup() {
@@ -55,8 +54,10 @@ void setup() {
 
   // initialize displays
   oled1.setFont(u8g2_font_7x14_tr);
-  oled1.begin();
+  oled1.setI2CAddress(OLED1_ADDR * 2);    // no clue why *2
   oled2.setFont(u8g2_font_7x14_tr);
+  oled2.setI2CAddress(OLED2_ADDR * 2);
+  oled1.begin();  
   oled2.begin();
   DEBUG_PRINTLN("Displays initialized");
 
@@ -97,7 +98,8 @@ void loop() {
 
   // check if timout time is over
   if ((millis() - lastKeyPress) > ((long)SLEEP_DELAY * 1000)) {
-    sleep();
+    if(!sleeping)
+      sleep();
   }
 }
 
@@ -262,7 +264,7 @@ void handleKeyPress(Key *key) {
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
-      refreshDisplays();  // TODO performance -> order change?
+      refreshDisplays();
       setLedDefaultValues();
       DEBUG_PRINTLN("Layer up pressed");
       break;

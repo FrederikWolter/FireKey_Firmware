@@ -48,10 +48,10 @@
 #define LED_BRIGHT 64         // brightness 0-255 (brightness = (percentage / 100) * 255)
 
 // Display
-#define OLED1_SDA_PIN 4       // SDA pin for OLED 1 (software I2C)
-#define OLED1_SCL_PIN 15      // SCL pin for OLED 1 (software I2C)
-#define OLED2_SDA_PIN 2       // SDA pin for OLED 2 (hardware I2C)
-#define OLED2_SCL_PIN 3       // SCL pin for OLED 2 (hardware I2C)
+#define OLED_SDA_PIN 2        // SDA pin for OLED 2 (hardware I2C)
+#define OLED_SCL_PIN 3        // SCL pin for OLED 2 (hardware I2C)
+#define OLED1_ADDR 0x3C       // I2C address of left OLED
+#define OLED2_ADDR 0x3D       // I2C address of right OLED
 #define MAX_KEY_LENGTH 8      // max length for a key name
 #define MAX_LAYER_LENGTH 10   // max length for a layer name
 #define OLED_COL_COUNT 2      // number of key columns per display
