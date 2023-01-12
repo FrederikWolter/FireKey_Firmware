@@ -141,7 +141,9 @@ void Key::setState(bool state) {
  * Sets the led color for a specific led index.
  */
 void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
-  // TODO potential problem with lastColor?
+  lastLEDColors[idx][0] = red;
+  lastLEDColors[idx][1] = green;
+  lastLEDColors[idx][2] = blue;
   (*this->ledStrip).setPixelColor(idx, red, green, blue);
   (*this->ledStrip).show();
 }
@@ -150,10 +152,6 @@ void Key::setLedRGB(byte idx, byte red, byte green, byte blue) {
  * Sets the led color for this key.
  */
 void Key::setLedRGB(byte red, byte green, byte blue) {
-  lastColor[0] = red;
-  lastColor[1] = green;
-  lastColor[2] = blue;
-
   this->setLedRGB(this->ledIndex, red, green, blue);
 }
 
@@ -173,7 +171,7 @@ void Key::setLedOff() {
 }
 
 /**
- * Loads default rgb value and activates the led with it.
+ * Sets the default led color for this key.
  */
 void Key::setLedDefault() {
   this->setLedRGB(

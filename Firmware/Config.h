@@ -219,6 +219,27 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
   },
 };
 
+// last led rgb color used for each key.
+// first index is based on led-index.
+// second index: 0=red; 1=green; 2=blue
+// used to restore after wakeup
+byte lastLEDColors[15][3] = {
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0}
+};
 
 // ============ LIBS =============
 #include <avr/pgmspace.h>
