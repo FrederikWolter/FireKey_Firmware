@@ -131,7 +131,7 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH + 1] PROGMEM = {
 };
 
 // led rgb colors for each layer and key (led index)
-const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
+const byte defaultLEDColors[MAX_LAYER][LED_COUNT][3] PROGMEM = {
   {
     { 0, 0, 0 },  // red, green, blue
     { 0, 0, 1 },
@@ -223,7 +223,7 @@ const byte defaultLEDColors[MAX_LAYER][15][3] PROGMEM = {
 // first index is based on led-index.
 // second index: 0=red; 1=green; 2=blue
 // used to restore after wakeup
-byte lastLEDColors[15][3] = {
+byte lastLEDColors[LED_COUNT][3] = {
   {0, 0, 0},
   {0, 0, 0},
   {0, 0, 0},
