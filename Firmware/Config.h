@@ -2,7 +2,7 @@
 * FIREKEY-PROJECT
 * 
 * CONFIG.h
-* File defining the most important configoration data.
+* File defining the most important configuration data.
 *************************************************************************/
 
 
@@ -68,7 +68,7 @@
 #define HLINE1 16             // x position of horizontal line
 
 #define COL_WIDTH 64          // display col width in pixel
-#define ROW_HEIGHT 16         // display row hight in pixel
+#define ROW_HEIGHT 16         // display row height in pixel
 
 
 // ========== CONSTANTS ==========
@@ -130,7 +130,7 @@ const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH + 1] PROGMEM = {
   },
 };
 
-// led rgb colors for each layer and key (led index)
+// LED rgb colors for each layer and key (led index)
 const byte defaultLEDColors[MAX_LAYER][LED_COUNT][3] PROGMEM = {
   {
     { 0, 0, 0 },  // red, green, blue
