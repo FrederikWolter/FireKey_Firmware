@@ -159,7 +159,7 @@ void Key::setLedRGB(byte red, byte green, byte blue) {
  * Turns LED on with last RGB value.
  */
 void Key::setLedOn() {
-  this->setLedRGB(lastColor[0], lastColor[1], lastColor[2]);
+  this->setLedRGB(lastLEDColors[this->ledIndex][0], lastLEDColors[this->ledIndex][1], lastLEDColors[this->ledIndex][2]);
 }
 
 /**
