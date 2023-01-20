@@ -53,10 +53,12 @@ void setup() {
   DEBUG_PRINTLN("RX/TX LEDs disabled");
 
   // initialize displays
-  oled1.setFont(u8g2_font_7x14_tr);
+  oled1.setFont(u8g2_font_7x14_mf);
   oled1.setI2CAddress(OLED1_ADDR * 2);    // no clue why *2
-  oled2.setFont(u8g2_font_7x14_tr);
+  oled1.enableUTF8Print();
+  oled2.setFont(u8g2_font_7x14_mf);
   oled2.setI2CAddress(OLED2_ADDR * 2);
+  oled2.enableUTF8Print();
   oled1.begin();  
   oled2.begin();
   DEBUG_PRINTLN("Displays initialized");
@@ -188,7 +190,9 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   byte w = oled->getStrWidth(buf);
 
   // draw text
-  oled->drawStr(xPosition - w / 2, yPosition + h, buf);
+  //oled->drawStr(xPosition - w / 2, yPosition + h, buf);
+  oled->setCursor(xPosition - w / 2, yPosition + h);
+  oled->print(buf);
 }
 
 
