@@ -190,7 +190,6 @@ void drawText(const char *buf, byte xPosition, byte yPosition, U8G2 *oled) {
   byte w = oled->getStrWidth(buf);
 
   // draw text
-  //oled->drawStr(xPosition - w / 2, yPosition + h, buf);
   oled->setCursor(xPosition - w / 2, yPosition + h);
   oled->print(buf);
 }
