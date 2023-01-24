@@ -38,8 +38,8 @@ Key keys[ROW_COUNT][COL_COUNT];
 Adafruit_NeoPixel ledStrip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // OLEDs
-U8G2_SH1106_128X64_NONAME_F_HW_I2C oled1(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
-U8G2_SH1106_128X64_NONAME_F_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
+U8G2_SH1106_128X64_NONAME_1_HW_I2C oled1(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
+U8G2_SH1106_128X64_NONAME_1_HW_I2C oled2(U8G2_R0, U8X8_PIN_NONE, OLED_SCL_PIN, OLED_SDA_PIN);
 
 // ============ SETUP ============
 void setup() {
@@ -114,9 +114,15 @@ void loop() {
 void refreshDisplays() {
   if (!sleeping) {
     DEBUG_PRINTLN("Refreshing display 1...");
-    setTextDisplay1();
+    oled1.firstPage();
+    do {
+      setTextDisplay1();
+    } while (oled1.nextPage());
     DEBUG_PRINTLN("Refreshing display 2...");
-    setTextDisplay2();
+    oled2.firstPage();
+    do {
+      setTextDisplay2();
+    } while (oled2.nextPage());
   }
 }
 
@@ -128,9 +134,7 @@ void refreshDisplays() {
  * @see layerNames
  * @see layerButtonFunc
  */
-void setTextDisplay1() {
-  oled1.clearBuffer();
-  
+void setTextDisplay1() {  
   // draw layer text
   char layerBuf[MAX_LAYER_LENGTH + 1];  // buffer to read layer name to
   getProgMemStr(layerNames[currentLayer], layerBuf);
@@ -148,9 +152,6 @@ void setTextDisplay1() {
     getProgMemStr(layerButtonFunc[currentLayer][i], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled1);
   }
-
-  // send to display
-  oled1.sendBuffer();
 }
 
 /**
@@ -162,8 +163,6 @@ void setTextDisplay1() {
  * @see layerButtonFunc
  */
 void setTextDisplay2() {
-  oled2.clearBuffer();
-
   // draw lines
   oled2.drawLine(LEFT, HLINE1, RIGHT, HLINE1);  // -----
   oled2.drawLine(VLINE1, TOP, VLINE1, BOTTOM);  //   |
@@ -176,9 +175,6 @@ void setTextDisplay2() {
     getProgMemStr(layerButtonFunc[currentLayer][i + OLED_KEY_COUNT], actionBuf);
     drawText(actionBuf, col * COL_WIDTH + (COL_WIDTH / 2), row * ROW_HEIGHT + TOP, &oled2);
   }
-
-  // send to display
-  oled2.sendBuffer();
 }
 
 /**
