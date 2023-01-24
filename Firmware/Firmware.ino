@@ -82,8 +82,8 @@ void setup() {
   // initialize start values
   lastKeyPress = millis();
   sleeping = false;
-  refreshDisplays();
   setLedDefaultValues();
+  refreshDisplays();
   DEBUG_PRINTLN("Values initialized");
 }
 
@@ -263,20 +263,20 @@ void handleKeyPress(Key *key) {
   switch (key->getIndex()) {
     case KEY_LAYER_UP:
       currentLayer = (currentLayer + 1) % MAX_LAYER;
-      refreshDisplays();
       setLedDefaultValues();
+      refreshDisplays();
       DEBUG_PRINTLN("Layer up pressed");
       break;
     case KEY_LAYER_HOME:
       currentLayer = HOME_LAYER;
-      refreshDisplays();
       setLedDefaultValues();
+      refreshDisplays();
       DEBUG_PRINTLN("Layer home pressed");
       break;
     case KEY_LAYER_DOWN:
       currentLayer = (currentLayer - 1 + MAX_LAYER) % MAX_LAYER;
-      refreshDisplays();
       setLedDefaultValues();
+      refreshDisplays();
       DEBUG_PRINTLN("Layer down pressed");
       break;
     case KEY_1:
