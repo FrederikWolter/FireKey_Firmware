@@ -9,7 +9,7 @@
 // ========= DEFINITIONS =========
 
 // debugging
-#define DEBUG
+//#define DEBUG
 
 // Matrix
 #define ROW_COUNT 3           // number of rows
@@ -79,54 +79,54 @@ byte currentLayer = HOME_LAYER;   // current selected layer
 
 // display-names of layers
 const char layerNames[MAX_LAYER][MAX_LAYER_LENGTH + 1] PROGMEM = {
+  "Layer0",
   "Layer1",
   "Layer2",
   "Layer3",
   "Layer4",
-  "Layer5",
 };
 
 // display-names of keys for each layer (uses key index)
 const char layerButtonFunc[MAX_LAYER][12][MAX_KEY_LENGTH + 1] PROGMEM = {
   {
-    "D0L0L1", "D0L0R1",   // name: Display 0 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
-    "D0L0L2", "D0L0R2",   // ...
-    "D0L0L3", "D0L0R3",
-    "D1L0L1", "D1L0R1",   // name: Display 1 Layer 0 Left Button Row 1; Display 0 Layer 0 Right Button Row 1
-    "D1L0L2", "D1L0R2",   // ...
-    "D1L0L3", "D1L0R3" 
+    "L0K0", "L0K1",   // name: Layer 0 Key 0; Layer 0 Key 1; Layer 0 Key 2
+    "L0K4", "L0K5",   // ...
+    "L0K8", "L0K9",
+    "L0K2", "L0K3",
+    "L0K6", "L0K7",
+    "L0K10", "L0K11" 
   },
   { 
-    "D0L1L1", "D0L1R1",
-    "D0L1L2", "D0L1R2",
-    "D0L1L3", "D0L1R3",
-    "D1L1L1", "D1L1R1",
-    "D1L1L2", "D1L1R2",
-    "D1L1L3", "D1L1R3" 
+    "L1K0", "L1K1",
+    "L1K4", "L1K5",
+    "L1K8", "L1K9",
+    "L1K2", "L1K3",
+    "L1K6", "L1K7",
+    "L1K10", "L1K11" 
   },
   { 
-    "D0L2L1", "D0L2R1",
-    "D0L2L2", "D0L2R2",
-    "D0L2L3", "D0L2R3",
-    "D1L2L1", "D1L2R1",
-    "D1L2L2", "D1L2R2",
-    "D1L2L3", "D1L2R3" 
+    "L2K0", "L2K1",
+    "L2K4", "L2K5",
+    "L2K8", "L2K9",
+    "L2K2", "L2K3",
+    "L2K6", "L2K7",
+    "L2K10", "L2K11" 
   },
   { 
-    "D0L3L1", "D0L3R1",
-    "D0L3L2", "D0L3R2",
-    "D0L3L3", "D0L3R3",
-    "D1L3L1", "D1L3R1",
-    "D1L3L2", "D1L3R2",
-    "D1L3L3", "D1L3R3" 
+    "L3K0", "L3K1",
+    "L3K4", "L3K5",
+    "L3K8", "L3K9",
+    "L3K2", "L3K3",
+    "L3K6", "L3K7",
+    "L3K10", "L3K11" 
   },
   { 
-    "D0L4L1", "D0L4R1",
-    "D0L4L2", "D0L4R2",
-    "D0L4L3", "D0L4R3",
-    "D1L4L1", "D1L4R1",
-    "D1L4L2", "D1L4R2",
-    "D1L4L3", "D1L4R3" 
+    "L4K0", "L4K1",
+    "L4K4", "L4K5",
+    "L4K8", "L4K9",
+    "L4K2", "L4K3",
+    "L4K6", "L4K7",
+    "L4K10", "L4K11" 
   },
 };
 
