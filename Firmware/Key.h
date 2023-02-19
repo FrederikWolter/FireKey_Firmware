@@ -12,7 +12,7 @@ class Key {
 private:
   byte rowPin;                      // pin of row key belongs to 
   byte colPin;                      // pin of column key belongs to
-  bool state;                       // user handeled state for e.g. for toggling
+  bool state;                       // user handled state for e.g. for toggling
   byte ledIndex;                    // index of corresponding led
   byte downCounter;                 // how long is key pressed - for hold and spam delays
   bool spamMode;                    // is key in spam mode
