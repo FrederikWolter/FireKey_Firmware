@@ -19,7 +19,6 @@
 *************************************************************************/
 
 // TODO header split (.h & .cpp)? [nice to have]
-// TODO change USB Device information? [Nice to have]
 
 
 // ===== LIBRARIES & CONFIG ======
@@ -90,8 +89,6 @@ void setup() {
 
 // ============ LOOP =============
 void loop() {
-  //Serial.println(freeMemory()); // TODO remove?
-
   // check if debounce time is over
   if ((millis() - lastRefresh) > DEBOUNCE_DELAY) {
     readMatrix();
